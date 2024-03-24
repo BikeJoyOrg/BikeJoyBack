@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Editar Facultad</title>
+</head>
+<body>
+  <h1>Editar Facultad</h1>
+
+  <form method="POST" action="{% url 'editar_facultad' facultad.FacultadId %}">
+    {% csrf_token %}
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre" name="nombre" value="{{ facultad.FacultadNombre }}">
+    <button type="submit">Guardar cambios</button>
+  </form>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lista de Facultades</title>
+</head>
+<body>
+  <h1>Lista de Facultades</h1>
+
+  <ul>
+    {% for facultad in facultades %}
+      <li>{{ facultad.FacultadNombre }}</li>
+      <form action="{% url 'eliminar_facultad' facultad.FacultadId %}" method="POST">
+        {% csrf_token %}
+        <button type="submit">Eliminar</button>
+      </form>
+      <a href="{% url 'editar_facultad' facultad.FacultadId %}">Editar</a>
+    {% endfor %}
+  </ul>
+
+</body>
+</html>

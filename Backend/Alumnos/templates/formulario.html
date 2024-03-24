@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Formulario de Facultad</title>
+</head>
+<body>
+  <h1>Formulario de Facultad</h1>
+
+  <!-- Formulario de creación -->
+  <h2>Agregar Facultad</h2>
+  <form action="{% url 'agregar_facultad' %}" method="POST">
+    {% csrf_token %}
+    <label for="FacultadNombre">Nombre:</label>
+    <input type="text" name="FacultadNombre" required>
+    <button type="submit">Agregar</button>
+  </form>
+ 
+</body>
+</html>
