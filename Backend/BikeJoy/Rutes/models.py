@@ -16,6 +16,7 @@ class Rutes(models.Model):
     RuteRating = models.IntegerField(null=True)
 
 
+
 class Punts(models.Model):
     PuntId = models.AutoField(primary_key=True)
     PuntName = models.CharField(max_length=50, null=True, blank=True,unique=True)
