@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.db import models
 
 from Rutes.models import Punts
