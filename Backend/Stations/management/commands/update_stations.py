@@ -1,10 +1,11 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.views.decorators.csrf import csrf_exempt
 
-from Stations.models import Station, StationMetadata
 from datetime import datetime
 import requests
 import pytz
+
+from Stations.models import Station
 
 
 @csrf_exempt
