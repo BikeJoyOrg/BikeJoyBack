@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,10 +25,9 @@ SECRET_KEY = 'django-insecure-8x$-h*!35c#4g@&i#^p*qwn+t(i&m6w9n5=h)eg(x^mt2==m&i
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['nattech.fib.upc.edu','127.0.0.1']
+ALLOWED_HOSTS = ['nattech.fib.upc.edu',"127.0.0.1"]
 
-
-
+CSRF_TRUSTED_ORIGINS = ['https://nattech.fib.upc.edu']
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'Alumnos.apps.AlumnosConfig',
+    'Rutes.apps.RutesConfig',
     'Stations.apps.StationsConfig'
 ]
 
@@ -85,10 +84,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'CLIENT': {
-            'host': 'localhost',
-            'port': 27017,            
+            'host': '172.16.4.38',
+            'port': 8080,
             },
-        'NAME': 'bdAlumnos',
+        'NAME': 'BD-BikeJoy',
     }
 }
 
@@ -115,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-es'
 
 TIME_ZONE = 'UTC'
 
@@ -128,6 +127,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

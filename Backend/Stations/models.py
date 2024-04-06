@@ -2,14 +2,14 @@ from datetime import datetime
 
 from django.db import models
 
+from Rutes.models import Punts
+
 
 # Create your models here.
 
 class Station(models.Model):
     station_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
-    lat = models.FloatField()
-    lon = models.FloatField()
+    PuntId = models.ForeignKey(Punts, on_delete=models.CASCADE, default=0)
     address = models.CharField(max_length=100)
     last_updated = models.IntegerField(default=0)
     mechanical = models.IntegerField(default=0)
@@ -17,5 +17,5 @@ class Station(models.Model):
     num_docks_available = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"Station: {self.name}, Last Updated: {self.last_updated}"
+        return f"Station: {self.station_id}, Last Updated: {self.last_updated}"
 

@@ -1,12 +1,13 @@
 from datetime import datetime
 
-import requests
+from django.contrib.sites import requests
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from rest_framework.utils import json
 
+from Rutes.models import Punts
 from Stations.models import Station
 
 
@@ -106,9 +107,8 @@ def get_info_stations(request):
             for station in stations:
                 station_info = {
                     'station_id': station.station_id,
-                    'name': station.name,
-                    'lat': station.lat,
-                    'lon': station.lon,
+                    'lat': float(str(station.PuntId.PuntLat)),
+                    'lon': float(str(station.PuntId.PuntLong)),
                     'address': station.address,
                     'last_updated': station.last_updated,
                     'mechanical': station.mechanical,
@@ -162,14 +162,19 @@ def create_station(request):
         try:
             # Convertir el cuerpo de la solicitud JSON en un diccionario Python
             request_data = JSONParser().parse(request)
+            punt, created = Punts.objects.get_or_create(
+                PuntName=request_data['address'],
+                defaults={
+                    'PuntLat': request_data['lat'],
+                    'PuntLong': request_data['lon']
+                }
+            )
 
             # Crear o actualizar la estación con los datos proporcionados
             station, created = Station.objects.update_or_create(
                 station_id=request_data['station_id'],
                 defaults={
-                    'name': request_data['name'],
-                    'lat': request_data['lat'],
-                    'lon': request_data['lon'],
+                    'PuntId': punt,
                     'address': request_data['address'],
                     'last_updated': request_data['last_updated'],
                     'mechanical': request_data['mechanical'],

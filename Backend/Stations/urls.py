@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views
+from Stations import views
 
 urlpatterns = [
     path('stations/a1', views.charge_info_stations, name='cargar_info_estaciones'),
