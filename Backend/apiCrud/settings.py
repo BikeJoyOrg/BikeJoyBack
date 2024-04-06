@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'Rutes.apps.RutesConfig',
-    'Stations.apps.StationsConfig'
+    'Stations.apps.StationsConfig',
+    'django_celery_beat'
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -84,10 +85,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'CLIENT': {
-            'host': '172.16.4.38',
-            'port': 8080,
+            'host': 'localhost',
+            'port': 27017,
             },
-        'NAME': 'BD-BikeJoy',
+        'NAME': 'proves',
     }
 }
 
