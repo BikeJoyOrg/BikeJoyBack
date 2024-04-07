@@ -4,7 +4,7 @@ from django.db import models
 # Create your models here.
 class Rutes(models.Model):
     RuteId = models.AutoField(primary_key=True)
-    RuteName = models.CharField(max_length=50)
+    RuteName = models.CharField(max_length=50,unique=True)
     # RuteType = models.CharField(max_length=50)
     # RuteDescription = models.CharField(max_length=50)
     RuteDistance = models.FloatField()
