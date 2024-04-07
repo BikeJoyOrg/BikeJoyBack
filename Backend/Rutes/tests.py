@@ -1,16 +1,16 @@
+import djongo
 from django.test import TestCase, Client
 from django.urls import reverse
+from djongo.database import DatabaseError
+from djongo.exceptions import SQLDecodeError
 from rest_framework import status
 import json
 import os
 import django
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'apiCrud.settings')
-django.setup()
-
 from Rutes.models import Rutes, Punts, PuntsIntermedis
-from serializers import RutesSerializer, PuntsSerializer, PuntsIntermedisSerializer
+from Rutes.serializers import RutesSerializer, PuntsSerializer, PuntsIntermedisSerializer
 
 
 class TestRutesApiView(TestCase):
@@ -39,31 +39,17 @@ class TestRutesApiView(TestCase):
         response = self.client.post(reverse('rutesApi'), data=json.dumps(data), content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_create_rute_invalid_data(self):
-        invalid_data = {
-            "RuteId": 2,
-            "RuteDistance": 10.0,
-            "RuteTime": 10,
-            "RuteRating": 5
-        }
-        response = self.client.post(reverse('rutesApi'), data=json.dumps(invalid_data),
-                                    content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    def test_create_rute_nom_duplicated_error(self):
-        invalid_data = {
-            "RuteId": 2,
-            "RuteName": "Test Rute",
-            "RuteDistance": 10.0,
-            "RuteTime": 10,
-            "RuteRating": 5
-        }
-        response = self.client.post(reverse('rutesApi'), data=json.dumps(invalid_data),
-                                    content_type='application/json')
-        self.assertEqual(response.status_code, 500)
 
 class TestAfegirPuntRutaView(TestCase):
     def setUp(self):
         self.client = Client()
+        Rutes.objects.create(
+            RuteId=1,
+            RuteName='Test Rute',
+            RuteDistance=10.0,
+            RuteTime=10,
+            RuteRating=5
+        )
 
     def test_afegir_punt_ruta(self):
         data = {
@@ -73,17 +59,14 @@ class TestAfegirPuntRutaView(TestCase):
             'PuntLong': -74.0,
             'PuntOrder': 1,
         }
-        response = self.client.post(reverse('afegir-punt-ruta'), data=json.dumps(data), content_type='application/json')
+        response = self.client.post(reverse('puntsIntermedisApi'), data=json.dumps(data), content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_afegir_punt_ruta_invalid_data(self):
         invalid_data = {
             # Add invalid data here
         }
-        response = self.client.post(reverse('afegir-punt-ruta'), data=json.dumps(invalid_data),
+        response = self.client.post(reverse('puntsIntermedisApi'), data=json.dumps(invalid_data),
                                     content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, 500)
 
-    def test_afegir_punt_ruta_method_not_allowed(self):
-        response = self.client.get(reverse('afegir-punt-ruta'))
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)

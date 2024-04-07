@@ -50,7 +50,7 @@ def AfegirPuntRuta(request):
             return JsonResponse(response_data, status=200)
         except Exception as e:
             # En caso de error, imprimirlo y devolver un mensaje de error
-            print(f"Error al crear/actualizar la estación: {e}")
+            print(f"Error al crear/actualizar punt ruta: {e}")
             response_data = {'message': 'Error al procesar la solicitud'}
             return JsonResponse(response_data, status=500)
 
