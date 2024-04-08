@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'Rutes.apps.RutesConfig',
-    'Stations.apps.StationsConfig'
+    'Stations.apps.StationsConfig',
+    'BikeLanes.apps.BikelanesConfig'
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
