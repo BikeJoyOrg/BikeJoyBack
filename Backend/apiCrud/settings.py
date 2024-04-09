@@ -40,9 +40,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'Rutes.apps.RutesConfig',
-    'Users.apps.UsersConfig'
+    'Users.apps.UsersConfig',
     'Stations.apps.StationsConfig',
-    'BikeLanes.apps.BikelanesConfig'
+    'BikeLanes.apps.BikelanesConfig',
+    'Pets.apps.PetsConfig',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -86,8 +87,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'CLIENT': {
-            'host': 'localhost',
-            'port': 27017,
+            'host': '172.16.4.38',
+            'port': 8080,
             },
         'NAME': 'BD-BikeJoy',
     }
