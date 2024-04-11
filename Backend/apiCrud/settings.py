@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-8x$-h*!35c#4g@&i#^p*qwn+t(i&m6w9n5=h)eg(x^mt2==m&i
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['nattech.fib.upc.edu',"127.0.0.1"]
+ALLOWED_HOSTS = ['nattech.fib.upc.edu',"127.0.0.1","localhost"]
 
 CSRF_TRUSTED_ORIGINS = ['https://nattech.fib.upc.edu']
 # Application definition
@@ -84,10 +84,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'CLIENT': {
-            'host': '172.16.4.38',
-            'port': 8080,
+            'host': 'localhost',
+            'port': 27017,
             },
-        'NAME': 'BD-BikeJoy',
+        'NAME': 'BikeJoy',
     }
 }
 

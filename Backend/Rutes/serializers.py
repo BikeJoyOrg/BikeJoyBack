@@ -10,7 +10,9 @@ class RutesSerializer(serializers.ModelSerializer):
                   'RuteName',
                   'RuteDistance',
                   'RuteTime',
-                  'RuteRating')
+                  'RuteRating',
+                    'PuntIniciLat',
+                    'PuntIniciLong',)
 
 
 class PuntsSerializer(serializers.ModelSerializer):

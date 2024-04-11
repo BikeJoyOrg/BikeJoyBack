@@ -14,6 +14,8 @@ class Rutes(models.Model):
     # RuteImage = models.CharField(max_length=50)
     # RuteLocation = models.CharField(max_length=50)
     RuteRating = models.IntegerField(null=True)
+    PuntIniciLat = models.FloatField()
+    PuntIniciLong = models.FloatField()
 
 
 
