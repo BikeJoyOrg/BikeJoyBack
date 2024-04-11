@@ -23,7 +23,7 @@
               <option name="id" value="5f90a9dd-2fd0-4bcb-87ff-d58044a6f4ce" />
               <option name="method" value="POST" />
               <option name="name" value="Draft" />
-              <option name="url" value="http://127.0.0.1:8000/stations/a5" />
+              <option name="url" value="http://127.0.0.1:8000/items/purchase/3/" />
             </requestState>
             <requestState>
               <option name="id" value="82ddf20d-d7a7-4f50-87e3-23e274ea7399" />
