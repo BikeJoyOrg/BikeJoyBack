@@ -8,33 +8,139 @@
             <requestState>
               <option name="body">
                 <bodyState>
-                  <option name="raw" value="{&#10;  &quot;station_id&quot;:21,&#10;  &quot;name&quot;:&quot;GRAN VIA CORTS CATALANES, 760&quot;,&#10;  &quot;lat&quot;:41.3979779,&#10;  &quot;lon&quot;:2.1801069,&#10;  &quot;address&quot;:&quot;GRAN VIA CORTS CATALANES, 760&quot;,&#10;  &quot;last_updated&quot;:1704063604,&#10;  &quot;mechanical&quot;:6,&#10;  &quot;ebike&quot;:2,&#10;  &quot;num_docks_available&quot;:0&#10;}" />
-                  <option name="type" value="JSON" />
+                  <option name="type" value="FORM_URL_ENCODED" />
+                  <option name="urlEncoded">
+                    <list>
+                      <urlEncodedParameterState>
+                        <option name="key" value="username" />
+                        <option name="value" value="andreu" />
+                      </urlEncodedParameterState>
+                      <urlEncodedParameterState>
+                        <option name="key" value="password" />
+                        <option name="value" value="prova1234" />
+                      </urlEncodedParameterState>
+                    </list>
+                  </option>
                 </bodyState>
               </option>
               <option name="headers">
                 <list>
                   <headerState>
                     <option name="key" value="Content-Type" />
-                    <option name="value" value="application/json" />
+                    <option name="value" value="application/x-www-form-urlencoded" />
                   </headerState>
                 </list>
               </option>
-              <option name="id" value="5f90a9dd-2fd0-4bcb-87ff-d58044a6f4ce" />
+              <option name="id" value="1763ce43-abcb-4336-aae0-499bcd9a2957" />
               <option name="method" value="POST" />
               <option name="name" value="Draft" />
-              <option name="url" value="http://127.0.0.1:8000/stations/a5" />
+              <option name="url" value="http://127.0.0.1:8000/users/login/" />
             </requestState>
             <requestState>
-              <option name="id" value="82ddf20d-d7a7-4f50-87e3-23e274ea7399" />
-              <option name="method" value="GET" />
+              <option name="body">
+                <bodyState>
+                  <option name="type" value="FORM_URL_ENCODED" />
+                  <option name="urlEncoded">
+                    <list>
+                      <urlEncodedParameterState>
+                        <option name="key" value="username" />
+                        <option name="value" value="lluc" />
+                      </urlEncodedParameterState>
+                      <urlEncodedParameterState>
+                        <option name="key" value="password" />
+                        <option name="value" value="prova1234" />
+                      </urlEncodedParameterState>
+                    </list>
+                  </option>
+                </bodyState>
+              </option>
+              <option name="headers">
+                <list>
+                  <headerState>
+                    <option name="key" value="Content-Type" />
+                    <option name="value" value="application/x-www-form-urlencoded" />
+                  </headerState>
+                </list>
+              </option>
+              <option name="id" value="3efc407d-eef0-4009-9171-186433177d36" />
+              <option name="method" value="POST" />
               <option name="name" value="Draft 1" />
-              <option name="url" value="http://127.0.0.1:8000/stations/" />
+              <option name="url" value="http://127.0.0.1:8000/users/login/" />
+            </requestState>
+            <requestState>
+              <option name="body">
+                <bodyState>
+                  <option name="type" value="FORM_URL_ENCODED" />
+                  <option name="urlEncoded">
+                    <list>
+                      <urlEncodedParameterState>
+                        <option name="key" value="username" />
+                        <option name="value" value="andreu" />
+                      </urlEncodedParameterState>
+                      <urlEncodedParameterState>
+                        <option name="key" value="password1" />
+                        <option name="value" value="prova123" />
+                      </urlEncodedParameterState>
+                      <urlEncodedParameterState>
+                        <option name="key" value="password2" />
+                        <option name="value" value="prova123" />
+                      </urlEncodedParameterState>
+                    </list>
+                  </option>
+                </bodyState>
+              </option>
+              <option name="headers">
+                <list>
+                  <headerState>
+                    <option name="key" value="Content-Type" />
+                    <option name="value" value="application/x-www-form-urlencoded" />
+                  </headerState>
+                </list>
+              </option>
+              <option name="id" value="f4ea49d3-2077-4d0a-88fc-07d430bb2352" />
+              <option name="method" value="POST" />
+              <option name="name" value="Draft 2" />
+              <option name="url" value="http://127.0.0.1:8000/users/register/" />
+            </requestState>
+            <requestState>
+              <option name="body">
+                <bodyState>
+                  <option name="type" value="FORM_URL_ENCODED" />
+                  <option name="urlEncoded">
+                    <list>
+                      <urlEncodedParameterState>
+                        <option name="key" value="username" />
+                        <option name="value" value="edgar" />
+                      </urlEncodedParameterState>
+                      <urlEncodedParameterState>
+                        <option name="key" value="password1" />
+                        <option name="value" value="prova1234" />
+                      </urlEncodedParameterState>
+                      <urlEncodedParameterState>
+                        <option name="key" value="password2" />
+                        <option name="value" value="prova1234" />
+                      </urlEncodedParameterState>
+                    </list>
+                  </option>
+                </bodyState>
+              </option>
+              <option name="headers">
+                <list>
+                  <headerState>
+                    <option name="key" value="Content-Type" />
+                    <option name="value" value="application/x-www-form-urlencoded" />
+                  </headerState>
+                </list>
+              </option>
+              <option name="id" value="f1ff49a1-2779-42b8-a9f2-d9a6072fc8f2" />
+              <option name="method" value="POST" />
+              <option name="name" value="Draft 3" />
+              <option name="url" value="http://127.0.0.1:8000/users/register/" />
             </requestState>
           </list>
         </option>
       </draftsState>
     </option>
-    <option name="id" value="e062be9a-cb73-4034-8143-8118b3c860d9" />
+    <option name="id" value="39a9506c-e486-45d1-ada4-f8dc9a63d588" />
   </component>
 </project>
