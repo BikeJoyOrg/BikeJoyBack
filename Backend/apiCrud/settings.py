@@ -85,10 +85,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'CLIENT': {
-            'host': 'localhost',
-            'port': 27017,
+            'host': '172.16.4.38',
+            'port': 8080,
             },
-        'NAME': 'proves',
+        'NAME': 'BD-BikeJoy',
     }
 }
 
