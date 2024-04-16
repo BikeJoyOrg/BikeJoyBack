@@ -5,7 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Backend" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/env" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.12 (Back)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.12 (BikeJoyBack2)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">
