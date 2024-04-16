@@ -93,6 +93,13 @@ if ESTIC_SERVIDOR:
             'PORT': '8080',
         }
     }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
     # si descomenteu aquesta part i comenteu la de dalt, poderu fer directament les migracions des de la vostra màquina
     '''
     DATABASES = {
@@ -105,13 +112,6 @@ if ESTIC_SERVIDOR:
         }
     }
     '''
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
