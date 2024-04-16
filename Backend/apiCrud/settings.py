@@ -25,7 +25,10 @@ SECRET_KEY = 'django-insecure-8x$-h*!35c#4g@&i#^p*qwn+t(i&m6w9n5=h)eg(x^mt2==m&i
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['nattech.fib.upc.edu',"127.0.0.1","10.0.2.2","localhost"]
+ALLOWED_HOSTS = ['nattech.fib.upc.edu',"127.0.0.1"]
+
+CSRF_TRUSTED_ORIGINS = ['https://nattech.fib.upc.edu']
+# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -38,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'Rutes.apps.RutesConfig',
     'Stations.apps.StationsConfig',
+    'Users.apps.UsersConfig',
     'Items.apps.ItemsConfig',
 ]
 
@@ -134,3 +138,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'auth.User'
