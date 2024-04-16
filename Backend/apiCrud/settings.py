@@ -79,10 +79,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'apiCrud.wsgi.application'
 
+DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'bikejoy',
+            'USER': 'postgres',
+            'HOST': '172.16.4.38',
+            'PORT': '8080',
+        }
+    }
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
+'''
 if ESTIC_SERVIDOR:
     DATABASES = {
         'default': {
@@ -101,7 +110,6 @@ else:
         }
     }
     # si descomenteu aquesta part i comenteu la de dalt, poderu fer directament les migracions des de la vostra màquina
-    '''
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
