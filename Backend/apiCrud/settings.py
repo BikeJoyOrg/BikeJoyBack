@@ -92,6 +92,7 @@ if ESTIC_SERVIDOR:
             'PORT': '8080',
         }
     }
+    # si descomenteu aquesta part i comenteu la de dalt, poderu fer directament les migracions des de la vostra màquina
     '''
     DATABASES = {
         'default': {
