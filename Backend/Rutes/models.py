@@ -6,7 +6,7 @@ class Rutes(models.Model):
     RuteId = models.AutoField(primary_key=True)
     RuteName = models.CharField(max_length=50)
     # RuteType = models.CharField(max_length=50)
-    # RuteDescription = models.CharField(max_length=50)
+    RuteDescription = models.CharField(max_length=50)
     RuteDistance = models.FloatField()
     RuteTime = models.IntegerField(default=0)
     # RuteDifficulty = models.CharField(max_length=50)
