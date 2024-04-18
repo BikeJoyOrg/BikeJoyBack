@@ -48,17 +48,17 @@ def haversine(lon1, lat1, lon2, lat2):
 @csrf_exempt
 def rutesApi(request):
     if request.method == 'GET':
-        duration = request.GET.get('duration')
         distance = request.GET.get('distance')
+        duration = request.GET.get('duration')
         nombreZona = request.GET.get('nombreZona')
         radio = 2
 
         rutes = Rutes.objects.all()
 
-        if duration is not None:
+        if duration is not None and duration != 0:
             rutes = rutes.filter(RuteTime__lte=duration)
 
-        if distance is not None:
+        if distance is not None and distance != 0:
             rutes = rutes.filter(RuteDistance__lte=distance)
 
         if nombreZona:
