@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'Rutes.apps.RutesConfig',
-    'Users.apps.UsersConfig'
+    'Users.apps.UsersConfig',
     'Stations.apps.StationsConfig',
     'BikeLanes.apps.BikelanesConfig'
 ]
@@ -89,7 +89,7 @@ DATABASES = {
             'host': 'localhost',
             'port': 27017,
             },
-        'NAME': 'BD-BikeJoy',
+        'NAME': 'proves',
     }
 }
 
