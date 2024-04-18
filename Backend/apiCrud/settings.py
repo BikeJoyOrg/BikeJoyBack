@@ -15,7 +15,8 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+ESTIC_SERVIDOR = False
+ESTIC_SERVIDOR = os.environ.get('ESTIC_SERVIDOR')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-8x$-h*!35c#4g@&i#^p*qwn+t(i&m6w9n5=h)eg(x^mt2==m&i
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['nattech.fib.upc.edu',"127.0.0.1","localhost"]
+ALLOWED_HOSTS = ['nattech.fib.upc.edu',"127.0.0.1"]
 
 CSRF_TRUSTED_ORIGINS = ['https://nattech.fib.upc.edu']
 # Application definition
@@ -40,7 +41,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'Rutes.apps.RutesConfig',
-    'Stations.apps.StationsConfig'
+    'Users.apps.UsersConfig',
+    'Stations.apps.StationsConfig',
+    'BikeLanes.apps.BikelanesConfig'
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -76,21 +79,47 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'apiCrud.wsgi.application'
 
+DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'bikejoy',
+            'USER': 'postgres',
+            'HOST': '172.16.4.38',
+            'PORT': '8080',
+        }
+    }
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'djongo',
-        'CLIENT': {
-            'host': 'localhost',
-            'port': 27017,
-            },
-        'NAME': 'BikeJoy',
+'''
+if ESTIC_SERVIDOR:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'bikejoy',
+            'USER': 'postgres',
+            'HOST': '172.16.4.38',
+            'PORT': '8080',
+        }
     }
-}
-
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+    # si descomenteu aquesta part i comenteu la de dalt, poderu fer directament les migracions des de la vostra màquina
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'bikejoy',
+            'USER': 'postgres',
+            'HOST': 'nattech.fib.upc.edu',
+            'PORT': '40380',
+        }
+    }
+    '''
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -136,3 +165,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'auth.User'
