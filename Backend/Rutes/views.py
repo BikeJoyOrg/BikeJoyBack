@@ -2,6 +2,7 @@ from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
+from django.db.models import Q
 from math import radians, sin, cos, sqrt, atan2
 
 
@@ -51,25 +52,28 @@ def rutesApi(request):
         distance = request.GET.get('distance')
         duration = request.GET.get('duration')
         nombreZona = request.GET.get('nombreZona')
+        query = request.GET.get('query')
         radio = 2
 
         rutes = Rutes.objects.all()
+        if query:
+            rutes = rutes.filter(Q(RuteName__icontains=query) | Q(RuteDescription__icontains=query))
+        else:
+            if duration is not None and duration != 0:
+                rutes = rutes.filter(RuteTime__lte=duration)
 
-        if duration is not None and duration != 0:
-            rutes = rutes.filter(RuteTime__lte=duration)
+            if distance is not None and distance != 0:
+                rutes = rutes.filter(RuteDistance__lte=distance)
 
-        if distance is not None and distance != 0:
-            rutes = rutes.filter(RuteDistance__lte=distance)
-
-        if nombreZona:
-            zona_coords = get_coords_for_zona(nombreZona)
-            if zona_coords:
-                filtered_rutes = []
-                for rute in rutes:
-                    distance_to_zona = haversine(zona_coords[1], zona_coords[0], rute.PuntIniciLong, rute.PuntIniciLat)
-                    if distance_to_zona <= radio:
-                        filtered_rutes.append(rute)
-                rutes = filtered_rutes
+            if nombreZona:
+                zona_coords = get_coords_for_zona(nombreZona)
+                if zona_coords:
+                    filtered_rutes = []
+                    for rute in rutes:
+                        distance_to_zona = haversine(zona_coords[1], zona_coords[0], rute.PuntIniciLong, rute.PuntIniciLat)
+                        if distance_to_zona <= radio:
+                            filtered_rutes.append(rute)
+                    rutes = filtered_rutes
 
         rutes_serializer = RutesSerializer(rutes, many=True)
         return JsonResponse(rutes_serializer.data, safe=False)
