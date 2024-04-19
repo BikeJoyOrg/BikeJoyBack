@@ -87,10 +87,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'CLIENT': {
-            'host': '172.16.4.38',
-            'port': 8080,
+            'host': 'localhost',
+            'port': 27017,
             },
-        'NAME': 'BD-BikeJoy',
+        'NAME': 'proves',
     }
 }
 
@@ -117,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'es-es'
+LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
