@@ -6,7 +6,9 @@ class Item(models.Model):
     stock_number = models.IntegerField()
     real_price = models.PositiveIntegerField()
     game_currency_price = models.PositiveIntegerField()
-    item_picture = models.PositiveSmallIntegerField()
+    item_picture_id = models.PositiveSmallIntegerField()
+    description = models.TextField()
+    title = models.CharField(max_length=24)
 
     def __str__(self):
         return str(self.id)
