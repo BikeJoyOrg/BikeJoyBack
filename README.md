@@ -18,4 +18,4 @@ python manage.py makemigrations "nomapp"
 --------
 python manage.py startapp "nomApp"
 
-prova ci cd9
+prova ci cd10
