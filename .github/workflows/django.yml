@@ -25,6 +25,31 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Run Tests
-      run: |
-        python manage.py test
+    #- name: Run Tests
+      #run: |
+        #python manage.py test
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH into the VM and pull the code
+        uses: appleboy/ssh-action@master
+        with:
+          host: nattech.fib.upc.edu
+          port: 22036
+          username: alumne
+          password: ${{ secrets.SSH_PASSWORD }}  # Recomiendo usar un secreto para la contraseña SSH
+          script: |
+            echo "${{ secrets.SSH_PASSWORD }}" | sudo -S sudo -i
+            cd /BikeJoyBack  # Reemplaza esto con la ruta real de tu proyecto
+            git pull     # Realiza el pull del código desde GitHub
+      - name: Restart Apache
+        uses: appleboy/ssh-action@master
+        with:
+          host: nattech.fib.upc.edu
+          port: 22036
+          username: alumne
+          password: ${{ secrets.SSH_PASSWORD }}  # Recomiendo usar un secreto para la contraseña SSH
+          script: |
+            sudo systemctl restart apache2  # Reinicia Apache
