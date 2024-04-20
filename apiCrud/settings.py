@@ -79,7 +79,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'apiCrud.wsgi.application'
-'''
+
 if 'test' in sys.argv:
     DATABASES = {
         'default': {
@@ -117,6 +117,7 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+    
     # si descomenteu aquesta part i comenteu la de dalt, poderu fer directament les migracions des de la vostra màquina
     DATABASES = {
         'default': {
@@ -127,7 +128,7 @@ else:
             'PORT': '40380',
         }
     }
-
+'''
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
