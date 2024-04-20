@@ -17,3 +17,5 @@ python manage.py makemigrations "nomapp"
 
 --------
 python manage.py startapp "nomApp"
+
+prova ci cd
