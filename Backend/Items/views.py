@@ -9,7 +9,7 @@ from .serializers import ItemSerializer
 
 
 @api_view(['GET'])
-def list_items():
+def list_items(request):
     items = Item.objects.filter(stock_number__gt=0)
     serializer = ItemSerializer(items, many=True)
     return Response(serializer.data)
@@ -48,7 +48,7 @@ def create_item(request):
     return render(request, 'item_form.html', {'form': form, 'is_edit': False})
 
 
-def editItem(request, item_id):
+def edit_item(request, item_id):
     item = Item.objects.get(id=item_id)
     if request.method == 'POST':
         form = ItemForm(request.POST, request.FILES, instance=item)
