@@ -28,16 +28,10 @@ jobs:
     #- name: Run Tests
       #run: |
         #python manage.py test
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
+    - name: Send Webhook
+      run: |
+        curl -X POST http://tu-servidor/webhook/deploy.sh
 
-    steps:
-      - name: Deploy 🚀
-        uses: appleboy/ssh-action@
-        with:
-          script:
-            curl -X POST http://nattech.fib.upc.edu:40360/webhook/deploy.sh
 
 # deploy:
 #   needs: build
