@@ -16,8 +16,7 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-ESTIC_SERVIDOR = False
-ESTIC_SERVIDOR = os.environ.get('ESTIC_SERVIDOR')
+ESTIC_SERVIDOR = "hola" in os.environ
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -80,7 +79,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'apiCrud.wsgi.application'
-
+'''
 if 'test' in sys.argv:
     DATABASES = {
         'default': {
@@ -98,10 +97,9 @@ else:
                 'PORT': '8080',
             }
         }
-
+'''
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-'''
 if ESTIC_SERVIDOR:
     DATABASES = {
         'default': {
@@ -129,7 +127,6 @@ else:
             'PORT': '40380',
         }
     }
-    '''
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
