@@ -34,29 +34,3 @@ def purchase_item(request, item_id):
     else:
         return Response({'error': 'User not authenticated'}, status=401)
 
-
-def create_item(request):
-    if request.method == 'POST':
-        form = ItemForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('item-list')
-        else:
-            print(form.errors)
-    else:
-        form = ItemForm()
-    return render(request, 'item_form.html', {'form': form, 'is_edit': False})
-
-
-def edit_item(request, item_id):
-    item = Item.objects.get(id=item_id)
-    if request.method == 'POST':
-        form = ItemForm(request.POST, request.FILES, instance=item)
-        if form.is_valid():
-            form.save()
-            return redirect('item-list')
-        else:
-            print(form.errors)
-    else:
-        form = ItemForm(instance=item)
-    return render(request, 'item_form.html', {'form': form, 'is_edit': False, 'item': item})
