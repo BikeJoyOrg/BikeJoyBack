@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,7 +27,7 @@ SECRET_KEY = 'django-insecure-8x$-h*!35c#4g@&i#^p*qwn+t(i&m6w9n5=h)eg(x^mt2==m&i
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['nattech.fib.upc.edu',"127.0.0.1"]
+ALLOWED_HOSTS = ['nattech.fib.upc.edu', "127.0.0.1"]
 
 CSRF_TRUSTED_ORIGINS = ['https://nattech.fib.upc.edu']
 # Application definition
@@ -43,7 +44,8 @@ INSTALLED_APPS = [
     'Rutes.apps.RutesConfig',
     'Users.apps.UsersConfig',
     'Stations.apps.StationsConfig',
-    'BikeLanes.apps.BikelanesConfig'
+    'BikeLanes.apps.BikelanesConfig',
+    'Items.apps.ItemsConfig',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -88,14 +90,14 @@ if 'test' in sys.argv:
     }
 else:
     DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': 'bikejoy',
-                'USER': 'postgres',
-                'HOST': '172.16.4.38',
-                'PORT': '8080',
-            }
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'bikejoy',
+            'USER': 'postgres',
+            'HOST': 'nattech.fib.upc.edu',
+            'PORT': '40380',
         }
+    }
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -147,7 +149,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -158,7 +159,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

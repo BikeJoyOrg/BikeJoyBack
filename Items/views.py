@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -12,7 +13,7 @@ from .serializers import ItemSerializer
 def list_items(request):
     items = Item.objects.filter(stock_number__gt=0)
     serializer = ItemSerializer(items, many=True)
-    return Response(serializer.data)
+    return Response({'items': serializer.data}, status=200)
 
 
 @api_view(['POST'])
