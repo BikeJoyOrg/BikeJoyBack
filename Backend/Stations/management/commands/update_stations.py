@@ -29,13 +29,10 @@ class Command(BaseCommand):
             data = json_data["data"]["stations"]
 
             for station_data in data:
-                stations, created = Station.objects.update_or_create(
-                    station_id=station_data['station_id'],
-                    defaults={
-                        'mechanical': station_data['num_bikes_available_types']['mechanical'],
-                        'ebike': station_data['num_bikes_available_types']['ebike'],
-                        'num_docks_available': station_data['num_docks_available'],
-                    }
+                Station.objects.filter(station_id=station_data['station_id']).update(
+                    mechanical=station_data['num_bikes_available_types']['mechanical'],
+                    ebike=station_data['num_bikes_available_types']['ebike'],
+                    num_docks_available=station_data['num_docks_available'],
                 )
 
             self.stdout.write(self.style.SUCCESS('Información de estaciones actualizada correctamente'))
