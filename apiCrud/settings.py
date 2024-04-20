@@ -18,10 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Acceder a la variable de entorno
-if os.getenv('DJANGO_RUNNING_ON_VM') == 'true':
-    print("La aplicación está corriendo en la máquina virtual.")
-else:
-    print("La aplicación no está corriendo en la máquina virtual.")
+#ESTIC_SERVIDOR = os.getenv('ESTIC_SERVIDOR', False)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
