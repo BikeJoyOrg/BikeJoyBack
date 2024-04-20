@@ -7,4 +7,5 @@ urlpatterns = [
     path('rutes/', views.rutesApi, name='rutesApi'),
     #path('punts/', views.puntsApi, name='puntsApi'),
     path('puntsInterRuta/', views.AfegirPuntRuta, name='puntsIntermedisApi'),
+    path('puntos-intermedios/<int:rute_id>/', views.puntos_intermedios_list, name='puntos_intermedios'),
 ]

@@ -86,6 +86,13 @@ def rutesApi(request):
         return JsonResponse("Error al guardar ruta", safe=False)
 
 
+def punts_intermedis_list(request, rute_id):
+    if request.method == 'GET':
+        punts_intermedis = PuntsIntermedis.objects.filter(RuteId=rute_id).select_related('PuntId').order_by('PuntOrder')
+        route_coords = [{'lat': pi.PuntId.PuntLat, 'lng': pi.PuntId.PuntLong} for pi in punts_intermedis]
+        return JsonResponse(route_coords, safe=False)
+
+
 @csrf_exempt
 def AfegirPuntRuta(request):
     if request.method == 'POST':
