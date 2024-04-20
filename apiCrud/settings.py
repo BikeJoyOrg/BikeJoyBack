@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,7 +44,8 @@ INSTALLED_APPS = [
     'Rutes.apps.RutesConfig',
     'Users.apps.UsersConfig',
     'Stations.apps.StationsConfig',
-    'BikeLanes.apps.BikelanesConfig'
+    'BikeLanes.apps.BikelanesConfig',
+    'Items.apps.ItemsConfig',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -79,15 +81,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'apiCrud.wsgi.application'
 
-if 'test' in sys.argv:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+if ESTIC_SERVIDOR:
+    if 'test' in sys.argv:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
         }
-    }
-else:
-    DATABASES = {
+    else:
+        DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.postgresql',
                 'NAME': 'bikejoy',
@@ -96,20 +101,6 @@ else:
                 'PORT': '8080',
             }
         }
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-'''
-if ESTIC_SERVIDOR:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'bikejoy',
-            'USER': 'postgres',
-            'HOST': '172.16.4.38',
-            'PORT': '8080',
-        }
-    }
 else:
     DATABASES = {
         "default": {
@@ -117,6 +108,7 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+    '''
     # si descomenteu aquesta part i comenteu la de dalt, poderu fer directament les migracions des de la vostra màquina
     DATABASES = {
         'default': {
@@ -128,7 +120,6 @@ else:
         }
     }
     '''
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
