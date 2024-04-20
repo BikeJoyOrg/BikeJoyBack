@@ -22,5 +22,7 @@ urlpatterns = [
     path('', include('Stations.urls')),
     path('', include('Rutes.urls')),
     path('', include('Items.urls')),
+    path('users/', include('Users.urls')),
+    path('', include('BikeLanes.urls'))
 ]
 

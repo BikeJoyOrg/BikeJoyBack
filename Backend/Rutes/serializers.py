@@ -8,9 +8,12 @@ class RutesSerializer(serializers.ModelSerializer):
         model = Rutes
         fields = ('RuteId',
                   'RuteName',
+                  'RuteDescription',
                   'RuteDistance',
                   'RuteTime',
-                  'RuteRating')
+                  'RuteRating',
+                    'PuntIniciLat',
+                    'PuntIniciLong',)
 
 
 class PuntsSerializer(serializers.ModelSerializer):
