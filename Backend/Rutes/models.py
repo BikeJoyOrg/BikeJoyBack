@@ -6,7 +6,7 @@ class Rutes(models.Model):
     RuteId = models.AutoField(primary_key=True)
     RuteName = models.CharField(max_length=50,unique=True)
     # RuteType = models.CharField(max_length=50)
-    # RuteDescription = models.CharField(max_length=50)
+    RuteDescription = models.CharField(max_length=50, null=True, blank=True)
     RuteDistance = models.FloatField()
     RuteTime = models.IntegerField(default=0)
     # RuteDifficulty = models.CharField(max_length=50)
@@ -14,6 +14,8 @@ class Rutes(models.Model):
     # RuteImage = models.CharField(max_length=50)
     # RuteLocation = models.CharField(max_length=50)
     RuteRating = models.IntegerField(null=True)
+    PuntIniciLat = models.FloatField(null = True)
+    PuntIniciLong = models.FloatField(null = True)
 
 
 
