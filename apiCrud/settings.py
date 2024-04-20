@@ -16,8 +16,7 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-ESTIC_SERVIDOR = False
-ESTIC_SERVIDOR = os.environ.get('ESTIC_SERVIDOR')
+ESTIC_SERVIDOR = "hola" in os.environ
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -90,18 +89,17 @@ if 'test' in sys.argv:
     }
 else:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'bikejoy',
-            'USER': 'postgres',
-            'HOST': 'nattech.fib.upc.edu',
-            'PORT': '40380',
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': 'bikejoy',
+                'USER': 'postgres',
+                'HOST': '172.16.4.38',
+                'PORT': '8080',
+            }
         }
-    }
-
+'''
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-'''
 if ESTIC_SERVIDOR:
     DATABASES = {
         'default': {
@@ -119,6 +117,7 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+    
     # si descomenteu aquesta part i comenteu la de dalt, poderu fer directament les migracions des de la vostra màquina
     DATABASES = {
         'default': {
@@ -129,8 +128,7 @@ else:
             'PORT': '40380',
         }
     }
-    '''
-
+'''
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
