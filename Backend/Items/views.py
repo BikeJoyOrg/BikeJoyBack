@@ -38,4 +38,18 @@ def createItem(request):
             print(form.errors)
     else:
         form = ItemForm()
-    return render(request, 'create_item.html', {'form': form})
+    return render(request, 'item_form.html', {'form': form, 'is_edit': False})
+
+
+def editItem(request, item_id):
+    item = Item.objects.get(id=item_id)
+    if request.method == 'POST':
+        form = ItemForm(request.POST, request.FILES, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect('item-list')
+        else:
+            print(form.errors)
+    else:
+        form = ItemForm(instance=item)
+    return render(request, 'item_form.html', {'form': form, 'is_edit': False, 'item': item})

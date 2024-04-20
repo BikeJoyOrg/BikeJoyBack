@@ -79,7 +79,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'apiCrud.wsgi.application'
-
+'''
 DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -87,6 +87,12 @@ DATABASES = {
             'USER': 'postgres',
             'HOST': '172.16.4.38',
             'PORT': '8080',
+        }
+    } '''
+DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         }
     }
 
