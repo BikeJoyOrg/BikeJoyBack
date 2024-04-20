@@ -30,7 +30,7 @@ jobs:
         #python manage.py test
     - name: Send Webhook
       run: |
-        curl -X http://nattech.fib.upc.edu:40360/webhook/deploy.sh
+        curl -X POST http://nattech.fib.upc.edu:40360/webhook/deploy.sh
 
 
 # deploy:
