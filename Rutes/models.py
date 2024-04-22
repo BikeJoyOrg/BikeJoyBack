@@ -1,5 +1,7 @@
 from django.db import models
 
+import Users
+
 
 # Create your models here.
 class Rutes(models.Model):
@@ -16,6 +18,7 @@ class Rutes(models.Model):
     RuteRating = models.IntegerField(null=True)
     PuntIniciLat = models.FloatField(null = True)
     PuntIniciLong = models.FloatField(null = True)
+    Completada_por = models.ManyToManyField(Users, through='RutesCompletades')
 
 
 
@@ -40,3 +43,22 @@ class Valoracio(models.Model):
     # UserId = models.IntegerField()
     Valoracio = models.IntegerField()
     # Comentari = models.CharField(max_length=50)
+
+
+class Comentario(models.Model):
+    Ruta = models.ForeignKey(Rutes, on_delete=models.CASCADE, related_name='comentario')
+    Usuari = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='comentario')
+    Contingut = models.TextField()
+    Data = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['Ruta', 'Usuari']
+
+
+class RutesCompletades(models.Model):
+    Ruta = models.ForeignKey(Rutes, on_delete=models.CASCADE)
+    Usuari = models.ForeignKey(Users, on_delete=models.CASCADE)
+    Data = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['Ruta', 'Usuari']
