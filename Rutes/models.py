@@ -21,10 +21,12 @@ class Rutes(models.Model):
 
 class Punts(models.Model):
     PuntId = models.AutoField(primary_key=True)
-    PuntName = models.CharField(max_length=50, null=True, blank=True,unique=True)
+    PuntName = models.CharField(max_length=50, null=True, blank=True)
     PuntLat = models.FloatField()
     PuntLong = models.FloatField()
-
+    class Meta:
+        # Especificar que la combinación de PuntLat y PuntLong debe ser única
+        unique_together = ('PuntLat', 'PuntLong')
 
 class PuntsIntermedis(models.Model):
     PuntInterId = models.AutoField(primary_key=True)
