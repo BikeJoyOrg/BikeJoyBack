@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from rest_framework.authtoken.models import Token
 
 
 @csrf_exempt
@@ -29,7 +30,8 @@ def login_view(request):
         user.save()
         if user is not None:
             login(request, user)
-            return JsonResponse({'status': 'success login'})
+            token, created = Token.objects.get_or_create(user=user)
+            return JsonResponse({'status': 'success login', 'token': token.key})
         else:
             return JsonResponse({'status': 'error', 'errors': 'Invalid username or password'})
     return JsonResponse({'status': 'error', 'errors': 'Only POST method allowed'})
