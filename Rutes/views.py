@@ -113,6 +113,7 @@ def AfegirPuntRuta(request):
                 punt_inter, created_inter = PuntsIntermedis.objects.get_or_create(
                     PuntId=punt,
                     RuteId=ruta,
+                    PuntOrder=request_data['PuntOrder'],
                     defaults={
                         'PuntOrder': request_data['PuntOrder'],
                     }
@@ -127,8 +128,8 @@ def AfegirPuntRuta(request):
             return JsonResponse(response_data, status=200)
         except Exception as e:
             # En caso de error, imprimirlo y devolver un mensaje de error
-            print(f"Error al crear/actualizar punt ruta: {e}")
-            response_data = {'message': 'Error al procesar la solicitud'}
+            print(f"Error al crear/actualizar punt ruta: ")
+            response_data = {'message': 'Error al procesar la solicitud'+str(e)}
             return JsonResponse(response_data, status=500)
 
     else:
