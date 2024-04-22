@@ -11,12 +11,9 @@ def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         username = request.POST['username']
-        print(f"Pas1")
         if CustomUser.objects.filter(username=username).exists():
             return JsonResponse({'status': 'error', 'errors': 'Username already exists'})
-        print(f"Pas2")
         if form.is_valid():
-            print(f"Pas3")
             form.save()
             return JsonResponse({'status': 'success register'})
         else:
