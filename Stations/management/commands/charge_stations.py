@@ -24,12 +24,9 @@ class Command(BaseCommand):
             for station_data in data:
                 # Obtener o crear el punto donde se sitúa la estación
                 punt, _ = Punts.objects.update_or_create(
-                    PuntId=station_data['station_id'],
-                    defaults={
-                        'PuntName': station_data.get('name', ''),
-                        'PuntLat': station_data['lat'],
-                        'PuntLong': station_data['lon']
-                    }
+                    PuntLat=station_data['lat'],
+                    PuntLong=station_data['lon'],
+                    PuntName=station_data['name'],
                 )
 
                 # Crear la estación con el punto
