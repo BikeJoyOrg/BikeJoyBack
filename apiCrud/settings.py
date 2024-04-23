@@ -19,6 +19,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Acceder a la variable de entorno
 #ESTIC_SERVIDOR = os.getenv('ESTIC_SERVIDOR', False)
+
+print("ESTIC_SERVIDOR: ", os.environ['ESTIC_SERVIDOR'])
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -48,6 +51,7 @@ INSTALLED_APPS = [
     'Stations.apps.StationsConfig',
     'BikeLanes.apps.BikelanesConfig',
     'Items.apps.ItemsConfig',
+    'storages',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -92,14 +96,14 @@ if 'test' in sys.argv:
     }
 else:
     DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': 'bikejoy',
-                'USER': 'postgres',
-                'HOST': '172.16.4.38',
-                'PORT': '8080',
-            }
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'bikejoy',
+            'USER': 'postgres',
+            'HOST': '172.16.4.38',
+            'PORT': '8080',
         }
+    }
 '''
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -176,6 +180,32 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'Users.CustomUser'
+
+AWS_ACCESS_KEY_ID = ''
+AWS_SECRET_ACCESS_KEY = ''
+
+
+AWS_STORAGE_BUCKET_NAME = 'pes-bikejoy' # - Enter your S3 bucket name HERE
+
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+
+AWS_S3_FILE_OVERWRITE = False
+
+
+STORAGES = {
+
+    # Media file (image) management
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+    },
+
+    # CSS and JS file management
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+    },
+}
+
+
 
 '''REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
