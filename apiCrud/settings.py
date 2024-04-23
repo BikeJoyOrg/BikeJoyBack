@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'Stations.apps.StationsConfig',
     'BikeLanes.apps.BikelanesConfig',
     'Items.apps.ItemsConfig',
-    'storages',
+    #'storages',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -180,7 +180,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'Users.CustomUser'
-
+'''
 AWS_ACCESS_KEY_ID = ''
 AWS_SECRET_ACCESS_KEY = ''
 
@@ -207,7 +207,7 @@ STORAGES = {
 
 
 
-'''REST_FRAMEWORK = {
+REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
