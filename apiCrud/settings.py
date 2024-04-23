@@ -19,10 +19,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Acceder a la variable de entorno
-#ESTIC_SERVIDOR = os.getenv('ESTIC_SERVIDOR', False)
+ESTIC_SERVIDOR = os.getenv('ESTIC_SERVIDOR', False ) == 'True'
 
-print("ESTIC_SERVIDOR: ", os.environ['ESTIC_SERVIDOR'])
-print("decoulpe: ", config('ESTIC_SERVIDOR'))
+print("ESTIC_SERVIDOR: ", ESTIC_SERVIDOR)
+estic_servidor = config('ESTIC_SERVIDOR', default=False)
+print("decoulpe: ", estic_servidor)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -88,6 +89,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'apiCrud.wsgi.application'
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 if 'test' in sys.argv:
     DATABASES = {
@@ -97,47 +100,37 @@ if 'test' in sys.argv:
         }
     }
 else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'bikejoy',
-            'USER': 'postgres',
-            'HOST': '172.16.4.38',
-            'PORT': '8080',
+    if ESTIC_SERVIDOR:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': 'bikejoy',
+                'USER': 'postgres',
+                'HOST': '172.16.4.38',
+                'PORT': '8080',
+            }
         }
-    }
-'''
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-if ESTIC_SERVIDOR:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'bikejoy',
-            'USER': 'postgres',
-            'HOST': '172.16.4.38',
-            'PORT': '8080',
+    else:
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": BASE_DIR / "db.sqlite3",
+            }
         }
-    }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+
+        # si descomenteu aquesta part i comenteu la de dalt, poderu fer directament les migracions des de la vostra màquina
+        '''
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': 'bikejoy',
+                'USER': 'postgres',
+                'HOST': 'nattech.fib.upc.edu',
+                'PORT': '40380',
+            }
         }
-    }
-    
-    # si descomenteu aquesta part i comenteu la de dalt, poderu fer directament les migracions des de la vostra màquina
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'bikejoy',
-            'USER': 'postgres',
-            'HOST': 'nattech.fib.upc.edu',
-            'PORT': '40380',
-        }
-    }
-'''
+        '''
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -183,8 +176,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'Users.CustomUser'
 '''
-AWS_ACCESS_KEY_ID = ''
-AWS_SECRET_ACCESS_KEY = ''
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 
 
 AWS_STORAGE_BUCKET_NAME = 'pes-bikejoy' # - Enter your S3 bucket name HERE
