@@ -17,13 +17,10 @@ from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Acceder a la variable de entorno
-ESTIC_SERVIDOR = os.getenv('ESTIC_SERVIDOR', False ) == 'True'
+ESTIC_SERVIDOR = os.getenv('ESTIC_SERVIDOR', False) == 'True'
 
 print("ESTIC_SERVIDOR: ", ESTIC_SERVIDOR)
-estic_servidor = config('ESTIC_SERVIDOR', default=False)
-print("decoulpe: ", estic_servidor)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -46,15 +43,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'rest_framework',
-    #'rest_framework.authtoken',
+    # 'rest_framework',
+    # 'rest_framework.authtoken',
     'corsheaders',
     "Users",
     'Rutes.apps.RutesConfig',
     'Stations.apps.StationsConfig',
     'BikeLanes.apps.BikelanesConfig',
     'Items.apps.ItemsConfig',
-    #'storages',
+    # 'storages',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -175,17 +172,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'Users.CustomUser'
-'''
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID', "")
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY', "")
 
-AWS_STORAGE_BUCKET_NAME = 'pes-bikejoy' # - Enter your S3 bucket name HERE
+AWS_STORAGE_BUCKET_NAME = 'pes-bikejoy'  # - Enter your S3 bucket name HERE
 
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 
 AWS_S3_FILE_OVERWRITE = False
-
 
 STORAGES = {
 
@@ -200,8 +195,7 @@ STORAGES = {
     },
 }
 
-
-
+'''
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
