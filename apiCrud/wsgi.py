@@ -8,20 +8,10 @@ https://docs.djangoproject.com/en/4.2/howto/deployment/wsgi/
 """
 
 import os
-import sys
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_DIR = os.path.abspath(os.path.join(BASE_DIR, '..'))
+from django.core.wsgi import get_wsgi_application
 
-sys.path.append(PROJECT_DIR)
-os.environ['DJANGO_SETTINGS_MODULE'] = 'apiCrud.settings'
-
-import django.core.handlers.wsgi
-
-_application = django.core.handlers.wsgi.WSGIHandler()
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'apiCrud.settings')
 
 
-def application(environ, start_response):
-    os.environ['ESTIC_SERVER'] = environ['ESTIC_SERVER']
-    return _application(environ, start_response)
-
+application = get_wsgi_application()
