@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'Stations.apps.StationsConfig',
     'BikeLanes.apps.BikelanesConfig',
     'Items.apps.ItemsConfig',
-    # 'storages',
+    'storages',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
