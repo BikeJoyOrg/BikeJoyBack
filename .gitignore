@@ -160,5 +160,7 @@ cython_debug/
 .idea
 
 migrations
+static
+staticfiles
 
 env

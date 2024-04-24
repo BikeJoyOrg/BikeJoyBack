@@ -161,20 +161,25 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_ROOT = BASE_DIR / 'media'
 
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'Users.CustomUser'
 
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID', "")
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY', "")
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID', '')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY', '')
+
+print("key ", AWS_ACCESS_KEY_ID)
+print("secret ", AWS_SECRET_ACCESS_KEY)
+
 
 AWS_STORAGE_BUCKET_NAME = 'pes-bikejoy'  # - Enter your S3 bucket name HERE
 
@@ -182,6 +187,9 @@ AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 
 AWS_S3_FILE_OVERWRITE = False
 
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+'''
 STORAGES = {
 
     # Media file (image) management
@@ -195,7 +203,9 @@ STORAGES = {
     },
 }
 
-'''
+WHITENOISE_KEEP_ONLY_HASHED_FILES = True
+
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
