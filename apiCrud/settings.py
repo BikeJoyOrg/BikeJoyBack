@@ -177,8 +177,6 @@ AUTH_USER_MODEL = 'Users.CustomUser'
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID', '')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY', '')
 
-print("key ", AWS_ACCESS_KEY_ID)
-print("secret ", AWS_SECRET_ACCESS_KEY)
 
 
 AWS_STORAGE_BUCKET_NAME = 'pes-bikejoy'  # - Enter your S3 bucket name HERE
