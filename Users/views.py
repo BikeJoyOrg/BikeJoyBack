@@ -30,8 +30,8 @@ def login_view(request):
         user.save()
         if user is not None:
             login(request, user)
-            #token, created = Token.objects.get_or_create(user=user)
-            return JsonResponse({'status': 'success login'})
+            token, created = Token.objects.get_or_create(user=user)
+            return JsonResponse({'status': 'success login', 'token': token.key, 'user': user.username})
         else:
             return JsonResponse({'status': 'error', 'errors': 'Invalid username or password'})
     return JsonResponse({'status': 'error', 'errors': 'Only POST method allowed'})
@@ -39,6 +39,7 @@ def login_view(request):
 
 @csrf_exempt
 def logout_view(request):
+    Token.objects.filter(user=request.user).delete()
     logout(request)
     return JsonResponse({'status': 'success logout'})
 
