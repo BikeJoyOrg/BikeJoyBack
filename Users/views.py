@@ -4,6 +4,8 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import CustomUser
 from .forms import CustomUserCreationForm
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import AuthenticationFailed
+from django.contrib.auth import get_user_model
 
 
 @csrf_exempt
@@ -39,8 +41,27 @@ def login_view(request):
 
 @csrf_exempt
 def logout_view(request):
-    Token.objects.filter(user=request.user).delete()
+    auth_token = request.META.get('HTTP_AUTHORIZATION', '').split(' ')[-1]
+    if not auth_token:
+        return JsonResponse({'status': 'error', 'errors': 'No token provided'})
+
+    try:
+        token = Token.objects.get(key=auth_token)
+    except Token.DoesNotExist:
+        return JsonResponse({'status': 'error', 'errors': 'Invalid token'})
+
+    User = get_user_model()
+    try:
+        user = User.objects.get(id=token.user_id)
+    except User.DoesNotExist:
+        return JsonResponse({'status': 'error', 'errors': 'User not found'})
+
+    # Delete the token
+    token.delete()
+
+    # Logout the user
     logout(request)
+
     return JsonResponse({'status': 'success logout'})
 
 # Create your views here.
