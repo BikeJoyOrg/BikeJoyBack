@@ -42,6 +42,7 @@ def login_view(request):
 @csrf_exempt
 def logout_view(request):
     auth_token = request.META.get('HTTP_AUTHORIZATION', '').split(' ')[-1]
+    print(auth_token)
     if not auth_token:
         return JsonResponse({'status': 'error', 'errors': 'No token provided'})
 
