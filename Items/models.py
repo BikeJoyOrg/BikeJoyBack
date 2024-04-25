@@ -9,7 +9,7 @@ class Item(models.Model):
     stock_number = models.IntegerField()
     real_price = models.PositiveIntegerField()
     game_currency_price = models.PositiveIntegerField()
-    item_picture_id = models.PositiveSmallIntegerField()
+    image = models.ImageField(upload_to='items/', null=True, blank=True)
 
 
 

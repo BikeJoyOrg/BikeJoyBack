@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'rest_framework',
-    # 'rest_framework.authtoken',
+    'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
     "Users",
     'Rutes.apps.RutesConfig',
@@ -202,11 +202,10 @@ STORAGES = {
 }
 
 WHITENOISE_KEEP_ONLY_HASHED_FILES = True
-
+'''
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
-'''
