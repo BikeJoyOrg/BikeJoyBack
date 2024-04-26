@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 import sys
 from pathlib import Path
+from corsheaders.defaults import default_methods, default_headers
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -33,7 +34,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['nattech.fib.upc.edu', "127.0.0.1"]
 
-CSRF_TRUSTED_ORIGINS = ['https://nattech.fib.upc.edu','http://nattech.fib.upc.edu:40360']
+CSRF_TRUSTED_ORIGINS = ['https://nattech.fib.upc.edu','http://nattech.fib.upc.edu:40360','172.16.4.36:8080']
 # Application definition
 
 
@@ -57,10 +58,16 @@ INSTALLED_APPS = [
 ]
 CORS_ALLOWED_ORIGINS = [
     'http://nattech.fib.upc.edu:40360',
+    '172.16.4.36:8080',
 ]
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_METHODS = (
+    *default_methods,
+)
+CORS_ALLOW_HEADERS = (
+    *default_headers,
+)
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = []
 '''
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
