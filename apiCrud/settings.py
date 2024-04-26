@@ -52,9 +52,13 @@ INSTALLED_APPS = [
     'BikeLanes.apps.BikelanesConfig',
     'Items.apps.ItemsConfig',
     'storages',
+    'Pets.apps.PetsConfig',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ['Authorization']
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -109,9 +113,12 @@ else:
         }
     else:
         DATABASES = {
-            "default": {
-                "ENGINE": "django.db.backends.sqlite3",
-                "NAME": BASE_DIR / "db.sqlite3",
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': 'bikejoy',
+                'USER': 'postgres',
+                'HOST': 'nattech.fib.upc.edu',
+                'PORT': '40380',
             }
         }
 
