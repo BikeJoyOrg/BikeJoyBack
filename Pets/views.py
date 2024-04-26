@@ -40,7 +40,7 @@ def get_mascotas_aconseguides_usuari(request):
     except Exception as e:
             print(f"Error al obtener información de mascotas aconseguides: {e}")
             return JsonResponse({'message': 'Error al obtener información de mascotas aconseguides'}, status=500)
-@csrf_exempt
+
 @api_view(['PATCH'])
 def equipar_mascota(request, name):
     if request.user.is_authenticated:
@@ -61,7 +61,7 @@ def equipar_mascota(request, name):
     else:
         return Response({'error': 'User not authenticated'}, status=401)
 
-@csrf_exempt
+
 @api_view(['POST'])
 def create_mascota_aconseguida(request, name):
     if request.user.is_authenticated:
