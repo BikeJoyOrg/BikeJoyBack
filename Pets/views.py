@@ -16,49 +16,32 @@ from Pets.serializers import MascotaSerializer
 
 # Create your views here.
 
+
 @api_view(['GET'])
-def list_mascotes(request):
-    pets = Mascota.objects.all()
-    serializer = MascotaSerializer(pets, many=True)
-    return Response({'pets': serializer.data}, status=200)
-@require_http_methods(["GET"])
 def get_mascota(request, name):
     try:
         mascota = (Mascota.objects.filter(name=name))
+        serializer = MascotaSerializer(mascota, many=False)
 
         if mascota:
-            return JsonResponse({'state': mascota}, status=200)
+            return Response({'state': serializer}, status=200)
         else:
-            return JsonResponse({'message': 'Mascota no encontrada'}, status=404)
+            return Response({'message': 'Mascota no encontrada'}, status=404)
 
     except Exception as e:
-        return JsonResponse({'message': f'Error al obtener información de la mascota: {e}'}, status=500)
+        return Response({'message': f'Error al obtener información de la mascota: {e}'}, status=500)
 
-@require_http_methods(["GET"])
+@api_view(['GET'])
 def get_mascotas(request):
     try:
         pets = Mascota.objects.all()
-        pet_data = [{
-            'name': pet.name,
-            'imgEgg': pet.imgEgg,
-            'imgEggl': pet.imgEggl,
-            'img1': pet.img1,
-            'img1l': pet.img1l,
-            'img2': pet.img2,
-            'img2l': pet.img2l,
-            'img3': pet.img3,
-            'img3l': pet.img3l,
-            'bonus1': pet.bonus1,
-            'bonus2': pet.bonus2,
-            'bonus3': pet.bonus3
+        serializer = MascotaSerializer(pets, many=True)
 
-        } for pet in pets]
-
-        return JsonResponse({'mascotes': pet_data}, status=200)
+        return Response({'mascotes': serializer}, status=200)
 
     except Exception as e:
             print(f"Error al obtener información de mascotas: {e}")
-            return JsonResponse({'message': 'Error al obtener información de mascotas'}, status=500)
+            return Response({'message': 'Error al obtener información de mascotas'}, status=500)
 
 
 @require_http_methods(["GET"])

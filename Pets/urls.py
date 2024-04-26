@@ -8,7 +8,6 @@ urlpatterns = [
     path('pets/getMascotasAconseguidesUsuari/<str:nicknameUsuari>/', views.get_mascotas_aconseguides_usuari, name='get_mascotas_aconseguides_usuari'),
     path('pets/equiparMascota/<str:nicknameUsuari>/<str:name>/', views.equipar_mascota, name='equipar_mascota'),
     path('pets/createMascotaAconseguida/', views.create_mascota_aconseguida, name='get_mascota'),
-    path('pets/listMascotes/', views.list_mascotes, name='list_mascotes'),
 ]
 
 
