@@ -222,6 +222,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
+'''
 if ESTIC_SERVIDOR:
     LOGGING = {
         'version': 1,
@@ -241,3 +242,4 @@ if ESTIC_SERVIDOR:
             },
         },
     }
+'''
