@@ -58,7 +58,7 @@ INSTALLED_APPS = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = None
+CORS_ALLOW_HEADERS = []
 '''
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -222,7 +222,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
-'''
+
 if ESTIC_SERVIDOR:
     LOGGING = {
         'version': 1,
@@ -237,9 +237,13 @@ if ESTIC_SERVIDOR:
         'loggers': {
             'django': {
                 'handlers': ['file'],
-                'level': 'DEBUG',
+                'level': 'INFO',  # Nivel INFO para el logger 'django'
                 'propagate': True,
+            },
+            'Users': {  # Nombre de tu aplicación
+                'handlers': ['file'],
+                'level': 'DEBUG',  # Nivel DEBUG para tu aplicación
+                'propagate': False,  # No propagar más allá de este logger
             },
         },
     }
-'''
