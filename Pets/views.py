@@ -19,18 +19,18 @@ from Pets.serializers import MascotaSerializer
 
 @api_view(['GET'])
 def get_mascota(request, name):
-    pets = Mascota.objects.filter(name=name)
+    pets = Mascota.objects.get(name=name)
     serializer = MascotaSerializer(pets, many=False)
-    return Response({'pets': serializer.data}, status=200)
+    return Response({'mascota': serializer.data}, status=200)
 
 @api_view(['GET'])
 def get_mascotas(request):
     pets = Mascota.objects.all()
     serializer = MascotaSerializer(pets, many=True)
-    return Response({'pets': serializer.data}, status=200)
+    return Response({'mascotes': serializer.data}, status=200)
 
 
-@require_http_methods(["GET"])
+@api_view(['GET'])
 def get_mascotas_aconseguides_usuari(request, nicknameUsuari):
     try:
         pets = MascotaAconseguida.objects.filter(nicknameUsuari=nicknameUsuari)
@@ -47,7 +47,7 @@ def get_mascotas_aconseguides_usuari(request, nicknameUsuari):
             print(f"Error al obtener información de mascotas aconseguides: {e}")
             return JsonResponse({'message': 'Error al obtener información de mascotas aconseguides'}, status=500)
 @csrf_exempt
-@require_http_methods(["PATCH"])
+@api_view(['PATCH'])
 def equipar_mascota(request, nicknameUsuari, name):
     try:
         # Obtén todas las MascotaAconseguida del mismo nicknameUsuari y establece equipada a False
@@ -65,7 +65,7 @@ def equipar_mascota(request, nicknameUsuari, name):
         return JsonResponse({'message': f'Error al equipar mascota: {e}'}, status=500)
 
 @csrf_exempt
-@require_http_methods(["POST"])
+@api_view(['POST'])
 def create_mascota_aconseguida(request):
     try:
         data = json.loads(request.body)
