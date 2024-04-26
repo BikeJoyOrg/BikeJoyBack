@@ -46,6 +46,7 @@ def logout_view(request):
     logger.debug("entro a logout_view")
     auth_token = request.META.get('HTTP_AUTHORIZATION', '').split(' ')[-1]
     logger.debug(request.META.get('HTTP_AUTHORIZATION', '').split(' '))
+    logger.debug(request.headers.get('Authorization'))
     if not auth_token:
         return JsonResponse({'status': 'error', 'errors': 'No token provided'})
 

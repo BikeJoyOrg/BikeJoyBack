@@ -33,7 +33,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['nattech.fib.upc.edu', "127.0.0.1"]
 
-CSRF_TRUSTED_ORIGINS = ['https://nattech.fib.upc.edu']
+CSRF_TRUSTED_ORIGINS = ['https://nattech.fib.upc.edu','http://nattech.fib.upc.edu:40360']
 # Application definition
 
 
