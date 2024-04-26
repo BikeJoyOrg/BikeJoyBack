@@ -55,7 +55,9 @@ INSTALLED_APPS = [
     'storages',
     'Pets.apps.PetsConfig',
 ]
-
+CORS_ALLOWED_ORIGINS = [
+    'http://nattech.fib.upc.edu:40360',
+]
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = []
