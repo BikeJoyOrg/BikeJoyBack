@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Mascota(models.Model):
-    name = models.TextField(max_length=50, primary_key=True)
+    name = models.CharField(max_length=50, primary_key=True)
     imgEgg = models.ImageField(upload_to='pets/', null=True, blank=True)
     imgEggl = models.ImageField(upload_to='pets/', null=True, blank=True)
     img1 = models.ImageField(upload_to='pets/', null=True, blank=True)
@@ -11,9 +11,9 @@ class Mascota(models.Model):
     img2l = models.ImageField(upload_to='pets/', null=True, blank=True)
     img3 = models.ImageField(upload_to='pets/', null=True, blank=True)
     img3l = models.ImageField(upload_to='pets/', null=True, blank=True)
-    bonus1 = models.IntegerField(default=0)
-    bonus2 = models.IntegerField(default=0)
-    bonus3 = models.IntegerField(default=0)
+    bonus1 = models.FloatField(default=0)
+    bonus2 = models.FloatField(default=0)
+    bonus3 = models.FloatField(default=0)
 
 class MascotaAconseguida(models.Model):
     nomMascota = models.ForeignKey(Mascota, on_delete=models.CASCADE)
