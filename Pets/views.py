@@ -11,7 +11,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import traceback
 
-from Pets.serializers import MascotaSerializer
+from Pets.serializers import MascotaSerializer, MascotaAconseguidaSerializer
 
 
 # Create your views here.
@@ -31,57 +31,48 @@ def get_mascotas(request):
 
 
 @api_view(['GET'])
-def get_mascotas_aconseguides_usuari(request, nicknameUsuari):
+def get_mascotas_aconseguides_usuari(request):
     try:
-        pets = MascotaAconseguida.objects.filter(nicknameUsuari=nicknameUsuari)
-        pet_data = [{
-            'nomMascota': pet.nomMascota.name,
-            'nicknameUsuari': pet.nicknameUsuari,
-            'nivell': pet.nivell,
-            'equipada': pet.equipada
-        } for pet in pets]
-
-        return JsonResponse({'mascotes': pet_data}, status=200)
+        pets = MascotaAconseguida.objects.filter(nicknameUsuari=request.user)
+        serializer = MascotaAconseguidaSerializer(pets, many=True)
+        return JsonResponse({'mascotes': serializer}, status=200)
 
     except Exception as e:
             print(f"Error al obtener información de mascotas aconseguides: {e}")
             return JsonResponse({'message': 'Error al obtener información de mascotas aconseguides'}, status=500)
 @csrf_exempt
 @api_view(['PATCH'])
-def equipar_mascota(request, nicknameUsuari, name):
-    try:
-        # Obtén todas las MascotaAconseguida del mismo nicknameUsuari y establece equipada a False
-        MascotaAconseguida.objects.filter(nicknameUsuari=nicknameUsuari).update(equipada=False)
+def equipar_mascota(request, name):
+    if request.user.is_authenticated:
+        try:
+            # Obtén todas las MascotaAconseguida del mismo nicknameUsuari y establece equipada a False
+            MascotaAconseguida.objects.filter(nicknameUsuari=request.user).update(equipada=False)
 
-        # Obtén la MascotaAconseguida específica y establece equipada a True
-        mascota = Mascota.objects.get(name=name)
-        mascotaA = MascotaAconseguida.objects.get(nicknameUsuari=nicknameUsuari, nomMascota=mascota)
-        mascotaA.equipada = True
-        mascotaA.save()
+            # Obtén la MascotaAconseguida específica y establece equipada a True
+            mascota = Mascota.objects.get(name=name)
+            mascotaA = MascotaAconseguida.objects.get(nicknameUsuari=request.user, nomMascota=mascota)
+            mascotaA.equipada = True
+            mascotaA.save()
 
-        return JsonResponse({'message': 'Mascota equipada correctamente'}, status=200)
+            return JsonResponse({'message': 'Mascota equipada correctamente'}, status=200)
 
-    except Exception as e:
-        return JsonResponse({'message': f'Error al equipar mascota: {e}'}, status=500)
+        except Exception as e:
+            return JsonResponse({'message': f'Error al equipar mascota: {e}'}, status=500)
+    else:
+        return Response({'error': 'User not authenticated'}, status=401)
 
 @csrf_exempt
 @api_view(['POST'])
-def create_mascota_aconseguida(request):
-    try:
-        data = json.loads(request.body)
+def create_mascota_aconseguida(request, name):
+    if request.user.is_authenticated:
         try:
-            mascota = Mascota.objects.get(name=data['nomMascota'])
+            pet = Mascota.objects.get(name=name)
+
+            mascota_aconseguida = MascotaAconseguida(nomMascota=pet, nicknameUsuari=request.user)
+            mascota_aconseguida.save()
+
+            return Response(status=200)
         except ObjectDoesNotExist:
-            return JsonResponse({'message': 'La mascota no existe'}, status=404)
-
-        MascotaAconseguida.objects.create(
-            nomMascota=mascota,
-            nicknameUsuari=data['nicknameUsuari'],
-            nivell=data['nivell'],
-            equipada=data['equipada']
-        )
-        return JsonResponse({'message': 'Mascota conseguida creada correctamente'}, status=200)
-
-    except Exception as e:
-        print(traceback.format_exc())
-        return JsonResponse({'message': f'Error al crear mascota conseguida: {e}'}, status=500)
+            return Response({'error': 'Mascota not found'}, status=404)
+    else:
+        return Response({'error': 'User not authenticated'}, status=401)

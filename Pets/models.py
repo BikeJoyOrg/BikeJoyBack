@@ -1,5 +1,8 @@
 from django.db import models
 
+from Users.models import CustomUser
+
+
 # Create your models here.
 class Mascota(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
@@ -17,7 +20,7 @@ class Mascota(models.Model):
 
 class MascotaAconseguida(models.Model):
     nomMascota = models.ForeignKey(Mascota, on_delete=models.CASCADE)
-    nicknameUsuari = models.CharField(max_length=50)
+    nicknameUsuari = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     nivell = models.IntegerField(default=1)
     equipada = models.BooleanField(default=False)
 
