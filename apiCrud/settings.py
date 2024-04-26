@@ -34,9 +34,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['nattech.fib.upc.edu', "127.0.0.1"]
 
-CSRF_TRUSTED_ORIGINS = ['https://nattech.fib.upc.edu','http://nattech.fib.upc.edu:40360','172.16.4.36:8080']
-# Application definition
-
+CSRF_TRUSTED_ORIGINS = ['https://nattech.fib.upc.edu',
+                        'http://nattech.fib.upc.edu:40360',
+                        '172.16.4.36:8080',
+                        'http://nattech.fib.upc.edu']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -58,6 +59,7 @@ INSTALLED_APPS = [
 ]
 CORS_ALLOWED_ORIGINS = [
     'http://nattech.fib.upc.edu:40360',
+    'http://nattech.fib.upc.edu',
     '172.16.4.36:8080',
 ]
 CORS_ALLOW_ALL_ORIGINS = True
@@ -68,13 +70,7 @@ CORS_ALLOW_HEADERS = (
     *default_headers,
 )
 CORS_ALLOW_CREDENTIALS = True
-'''
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-    ],
-}
-'''
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -198,8 +194,6 @@ AUTH_USER_MODEL = 'Users.CustomUser'
 
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID', '')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY', '')
-
-
 
 AWS_STORAGE_BUCKET_NAME = 'pes-bikejoy'  # - Enter your S3 bucket name HERE
 
