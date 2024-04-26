@@ -13,8 +13,7 @@ import traceback
 @require_http_methods(["GET"])
 def get_mascota(request, name):
     try:
-        mascota = (Mascota.objects.filter(name=name)
-                   .values('name', 'img1', 'img1l', 'img2', 'img2l', 'img3', 'img3l', 'bonus').first())
+        mascota = (Mascota.objects.filter(name=name))
 
         if mascota:
             return JsonResponse({'state': mascota}, status=200)
@@ -30,13 +29,18 @@ def get_mascotas(request):
         pets = Mascota.objects.all()
         pet_data = [{
             'name': pet.name,
+            'imgEgg': pet.imgEgg,
+            'imgEggl': pet.imgEggl,
             'img1': pet.img1,
             'img1l': pet.img1l,
             'img2': pet.img2,
             'img2l': pet.img2l,
             'img3': pet.img3,
             'img3l': pet.img3l,
-            'bonus': pet.bonus
+            'bonus1': pet.bonus1,
+            'bonus2': pet.bonus2,
+            'bonus3': pet.bonus3
+
         } for pet in pets]
 
         return JsonResponse({'mascotes': pet_data}, status=200)
