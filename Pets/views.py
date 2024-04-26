@@ -19,29 +19,15 @@ from Pets.serializers import MascotaSerializer
 
 @api_view(['GET'])
 def get_mascota(request, name):
-    try:
-        mascota = (Mascota.objects.filter(name=name))
-        serializer = MascotaSerializer(mascota, many=False)
-
-        if mascota:
-            return Response({'state': serializer}, status=200)
-        else:
-            return Response({'message': 'Mascota no encontrada'}, status=404)
-
-    except Exception as e:
-        return Response({'message': f'Error al obtener información de la mascota: {e}'}, status=500)
+    pets = Mascota.objects.filter(name=name)
+    serializer = MascotaSerializer(pets, many=False)
+    return Response({'pets': serializer.data}, status=200)
 
 @api_view(['GET'])
 def get_mascotas(request):
-    try:
-        pets = Mascota.objects.all()
-        serializer = MascotaSerializer(pets, many=True)
-
-        return Response({'mascotes': serializer}, status=200)
-
-    except Exception as e:
-            print(f"Error al obtener información de mascotas: {e}")
-            return Response({'message': 'Error al obtener información de mascotas'}, status=500)
+    pets = Mascota.objects.all()
+    serializer = MascotaSerializer(pets, many=True)
+    return Response({'pets': serializer.data}, status=200)
 
 
 @require_http_methods(["GET"])
