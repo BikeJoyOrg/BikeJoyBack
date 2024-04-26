@@ -7,7 +7,9 @@ from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth import get_user_model
 
+import logging
 
+logger = logging.getLogger(__name__)
 @csrf_exempt
 def register(request):
     if request.method == 'POST':
@@ -41,9 +43,9 @@ def login_view(request):
 
 @csrf_exempt
 def logout_view(request):
-    print("Fa print")
+    logger.debug("entro a logout_view")
     auth_token = request.META.get('HTTP_AUTHORIZATION', '').split(' ')[-1]
-    print(auth_token)
+    logger.debug(request.META.get('HTTP_AUTHORIZATION', '').split(' '))
     if not auth_token:
         return JsonResponse({'status': 'error', 'errors': 'No token provided'})
 
