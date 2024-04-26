@@ -7,9 +7,20 @@ from Pets.models import Mascota
 from Pets.models import MascotaAconseguida
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 import traceback
 
+from Pets.serializers import MascotaSerializer
+
+
 # Create your views here.
+
+@api_view(['GET'])
+def list_mascotes(request):
+    pets = Mascota.objects.all()
+    serializer = MascotaSerializer(pets, many=True)
+    return Response({'pets': serializer.data}, status=200)
 @require_http_methods(["GET"])
 def get_mascota(request, name):
     try:
