@@ -36,6 +36,7 @@ ALLOWED_HOSTS = ['nattech.fib.upc.edu', "127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = ['https://nattech.fib.upc.edu']
 # Application definition
 
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
