@@ -1,6 +1,9 @@
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 from .models import CustomUser
 from .forms import CustomUserCreationForm
 from rest_framework.authtoken.models import Token
@@ -10,38 +13,48 @@ from django.contrib.auth import get_user_model
 import logging
 
 logger = logging.getLogger(__name__)
+
+
 @csrf_exempt
+@api_view(['POST'])
 def register(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        username = request.POST['username']
-        if CustomUser.objects.filter(username=username).exists():
-            return JsonResponse({'status': 'error', 'errors': 'Username already exists'})
-        if form.is_valid():
-            form.save()
-            return JsonResponse({'status': 'success register'})
-        else:
-            return JsonResponse({'status': 'error', 'errors': form.errors})
-    return JsonResponse({'status': 'error', 'errors': 'Only POST method allowed'})
+    form = CustomUserCreationForm(request.POST)
+    username = request.POST['username']
+    if CustomUser.objects.filter(username=username).exists():
+        return JsonResponse({'status': 'error', 'errors': 'Username already exists'})
+    if form.is_valid():
+        form.save()
+        return JsonResponse({'status': 'success register'})
+    else:
+        return JsonResponse({'status': 'error', 'errors': form.errors})
 
 
 @csrf_exempt
+@api_view(['POST'])
 def login_view(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(username=username, password=password)
-        user.save()
-        if user is not None:
-            login(request, user)
-            token, created = Token.objects.get_or_create(user=user)
-            return JsonResponse({'status': 'success login', 'token': token.key, 'user': user.username})
-        else:
-            return JsonResponse({'status': 'error', 'errors': 'Invalid username or password'})
-    return JsonResponse({'status': 'error', 'errors': 'Only POST method allowed'})
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(username=username, password=password)
+    user.save()
+    if user is not None:
+        login(request, user)
+        token, created = Token.objects.get_or_create(user=user)
+        return JsonResponse({
+            'status': 'success login',
+            'token': token.key,
+            'user': {
+                'username': user.username,
+                'coins': user.coins,
+                'distance': user.distance,
+                'xp': user.xp,
+            }
+        })
+    else:
+        return JsonResponse({'status': 'error', 'errors': 'Invalid username or password'})
 
 
 @csrf_exempt
+@api_view(['POST'])
 def logout_view(request):
     logger.debug("entro a logout_view")
     auth_token = request.META.get('HTTP_AUTHORIZATION', '').split(' ')[-1]
@@ -69,4 +82,19 @@ def logout_view(request):
 
     return JsonResponse({'status': 'success logout'})
 
-# Create your views here.
+
+@api_view(['GET'])
+def get_user(request, username):
+    try:
+        user = CustomUser.objects.get(username=username)
+    except CustomUser.DoesNotExist:
+        return Response({'error': 'User not found'}, status=404)
+
+    user_data = {
+        'username': user.username,
+        'coins': user.coins,
+        'distance': user.distance,
+        'xp': user.xp,
+    }
+
+    return JsonResponse(user_data)
