@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -97,31 +98,38 @@ def punts_intermedis_list(request, rute_id):
 def AfegirPuntRuta(request):
     if request.method == 'POST':
         try:
-            request_data = JSONParser().parse(request)
-            ruta = Rutes.objects.get(RuteId=request_data['RuteId'])
-            punt, created = Punts.objects.get_or_create(
-                PuntName=request_data['PuntName'],
-                defaults={
-                    'PuntLat': request_data['PuntLat'],
-                    'PuntLong': request_data['PuntLong']
-                }
-            )
-            station, created = PuntsIntermedis.objects.get_or_create(
-                defaults={
-                    'PuntId': punt,
-                    'RuteId': ruta,
-                    'PuntOrder': request_data['PuntOrder'],
-                }
-            )
-            if created:
-                response_data = {'message': 'Ruta creada correctamente'}
-            else:
-                response_data = {'message': 'ruta actualizada correctamente'}
+            with transaction.atomic():
+                request_data = JSONParser().parse(request)
+                ruta = Rutes.objects.get(RuteId=request_data['RuteId'])
+                punt, created = Punts.objects.get_or_create(
+                    PuntLat=request_data['PuntLat'],
+                    PuntLong=request_data['PuntLong'],
+                    defaults={
+                        'PuntName': request_data['PuntName'],
+                    }
+                )
+
+                # Crear o actualizar el punto intermedio
+                punt_inter, created_inter = PuntsIntermedis.objects.get_or_create(
+                    PuntId=punt,
+                    RuteId=ruta,
+                    PuntOrder=request_data['PuntOrder'],
+                    defaults={
+                        'PuntOrder': request_data['PuntOrder'],
+                    }
+                )
+
+                # Si se creó el punto intermedio correctamente, retornar un mensaje adecuado
+                if created_inter:
+                    response_data = {'message': 'Punto intermedio creado correctamente'}
+                else:
+                    response_data = {'message': 'Punto intermedio actualizado correctamente'}
+
             return JsonResponse(response_data, status=200)
         except Exception as e:
             # En caso de error, imprimirlo y devolver un mensaje de error
-            print(f"Error al crear/actualizar punt ruta: {e}")
-            response_data = {'message': 'Error al procesar la solicitud'}
+            print(f"Error al crear/actualizar punt ruta: ")
+            response_data = {'message': 'Error al procesar la solicitud'+str(e)}
             return JsonResponse(response_data, status=500)
 
     else:

@@ -1,16 +1,21 @@
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from .models import CustomUser
+from .forms import CustomUserCreationForm
+from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import AuthenticationFailed
+from django.contrib.auth import get_user_model
 
+import logging
 
+logger = logging.getLogger(__name__)
 @csrf_exempt
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         username = request.POST['username']
-        if User.objects.filter(username=username).count() > 0:
+        if CustomUser.objects.filter(username=username).exists():
             return JsonResponse({'status': 'error', 'errors': 'Username already exists'})
         if form.is_valid():
             form.save()
@@ -29,7 +34,8 @@ def login_view(request):
         user.save()
         if user is not None:
             login(request, user)
-            return JsonResponse({'status': 'success login'})
+            token, created = Token.objects.get_or_create(user=user)
+            return JsonResponse({'status': 'success login', 'token': token.key, 'user': user.username})
         else:
             return JsonResponse({'status': 'error', 'errors': 'Invalid username or password'})
     return JsonResponse({'status': 'error', 'errors': 'Only POST method allowed'})
@@ -37,7 +43,30 @@ def login_view(request):
 
 @csrf_exempt
 def logout_view(request):
+    logger.debug("entro a logout_view")
+    auth_token = request.META.get('HTTP_AUTHORIZATION', '').split(' ')[-1]
+    logger.debug(request.META.get('HTTP_AUTHORIZATION', '').split(' '))
+    logger.debug(request.headers.get('Authorization'))
+    if not auth_token:
+        return JsonResponse({'status': 'error', 'errors': 'No token provided'})
+
+    try:
+        token = Token.objects.get(key=auth_token)
+    except Token.DoesNotExist:
+        return JsonResponse({'status': 'error', 'errors': 'Invalid token'})
+
+    User = get_user_model()
+    try:
+        user = User.objects.get(id=token.user_id)
+    except User.DoesNotExist:
+        return JsonResponse({'status': 'error', 'errors': 'User not found'})
+
+    # Delete the token
+    token.delete()
+
+    # Logout the user
     logout(request)
+
     return JsonResponse({'status': 'success logout'})
 
 # Create your views here.
