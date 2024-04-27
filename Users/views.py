@@ -21,17 +21,19 @@ def register(request):
     form = CustomUserCreationForm(request.POST)
     username = request.POST['username']
     if CustomUser.objects.filter(username=username).exists():
-        return JsonResponse({'status': 'error', 'errors': 'Username already exists'})
+        return Response({'error': 'Username already exists'}, status=400)
     if form.is_valid():
         form.save()
-        return JsonResponse({'status': 'success register'})
+        return JsonResponse({'status': 'success register'}, status=200)
     else:
-        return JsonResponse({'status': 'error', 'errors': form.errors})
+        return Response({'error': form.errors}, status=400)
 
 
 @csrf_exempt
 @api_view(['POST'])
 def login_view(request):
+    if request.method != 'POST':
+        return Response({'error': 'Only POST requests are allowed'}, status=400)
     username = request.POST['username']
     password = request.POST['password']
     user = authenticate(username=username, password=password)
@@ -48,9 +50,9 @@ def login_view(request):
                 'distance': user.distance,
                 'xp': user.xp,
             }
-        })
+        }, status=200)
     else:
-        return JsonResponse({'status': 'error', 'errors': 'Invalid username or password'})
+        return Response({'error': 'Invalid username or password'}, status=400)
 
 
 @csrf_exempt
@@ -61,18 +63,18 @@ def logout_view(request):
     logger.debug(request.META.get('HTTP_AUTHORIZATION', '').split(' '))
     logger.debug(request.headers.get('Authorization'))
     if not auth_token:
-        return JsonResponse({'status': 'error', 'errors': 'No token provided'})
+        return Response({'error': 'No token provided'}, status=400)
 
     try:
         token = Token.objects.get(key=auth_token)
     except Token.DoesNotExist:
-        return JsonResponse({'status': 'error', 'errors': 'Invalid token'})
+        return Response({'error': 'Invalid token'}, status=400)
 
     User = get_user_model()
     try:
         user = User.objects.get(id=token.user_id)
     except User.DoesNotExist:
-        return JsonResponse({'status': 'error', 'errors': 'User not found'})
+        return Response({'error': 'User not found'}, status=400)
 
     # Delete the token
     token.delete()
@@ -80,7 +82,7 @@ def logout_view(request):
     # Logout the user
     logout(request)
 
-    return JsonResponse({'status': 'success logout'})
+    return Response(200)
 
 
 @api_view(['GET'])
@@ -97,4 +99,4 @@ def get_user(request, username):
         'xp': user.xp,
     }
 
-    return JsonResponse(user_data)
+    return Response(user_data, status=200)
