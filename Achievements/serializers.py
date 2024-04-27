@@ -6,13 +6,14 @@ from .models import Achievement
 class LevelSerializer(serializers.ModelSerializer):
     valueRequired = serializers.IntegerField(source='value_required')
     coinReward = serializers.IntegerField(source='coin_reward')
+    xpReward = serializers.IntegerField(source='xp_reward')
     petReward = serializers.CharField(source='pet_reward')
     isAchieved = serializers.BooleanField(source='is_achieved')
     isRedeemed = serializers.BooleanField(source='is_redeemed')
 
     class Meta:
         model = Level
-        fields = ['level', 'description', 'valueRequired', 'coinReward', 'petReward', 'isAchieved', 'isRedeemed']
+        fields = ['level', 'description', 'valueRequired', 'coinReward', 'xpReward', 'petReward', 'isAchieved', 'isRedeemed']
 
 
 class AchievementSerializer(serializers.ModelSerializer):
