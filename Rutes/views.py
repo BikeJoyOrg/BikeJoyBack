@@ -84,7 +84,7 @@ def rutesApi(request):
         if rutes_serializer.is_valid():
             rutes_serializer.save()
             return JsonResponse(rutes_serializer.data, status=201)
-        return JsonResponse("Error al guardar ruta", safe=False)
+        return JsonResponse("Error al guardar ruta", safe=False, status=400)
 
 
 def punts_intermedis_list(request, rute_id):

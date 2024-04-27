@@ -1,68 +1,99 @@
-"""
+from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APITestCase
 from django.contrib.auth.models import User
+
+from Users.models import CustomUser
 from .models import Item, ItemPurchased
 import factory
 
-
-class UserFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = User
-
-    username = factory.Sequence(lambda n: f"user{n}")
-    password = factory.PostGenerationMethodCall('set_password', 'testpass')
+from .serializers import ItemSerializer
 
 
-class ItemFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Item
-
-    title = "Test Item"
-    description = "Description of Test Item"
-    stock_number = 5
-    real_price = 100
-    game_currency_price = 50
-    item_picture_id = 1
-
-
-class TestItemViews(APITestCase):
+class ListItemsTest(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = UserFactory()
-        self.item = ItemFactory()
-        self.list_url = reverse('list_items')
-        self.purchase_url = lambda item_id: reverse('purchase_item', kwargs={'item_id': item_id})
 
-    def test_list_items_shows_only_in_stock(self):
-        # Creating items with different stock numbers
-        ItemFactory(stock_number=0)
-        response = self.client.get(self.list_url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Should only return items with stock_number > 0
-        self.assertEqual(len(response.data), 1)
+        # Crear item list
+        self.item1 = Item.objects.create(
+            title='Item 1',
+            description='Description 1',
+            stock_number=5,
+            real_price=10,
+            game_currency_price=100,
+        )
+        self.item2 = Item.objects.create(
+            title='Item 2',
+            description='Description 2',
+            stock_number=0,
+            real_price=15,
+            game_currency_price=150,
+        )
+        self.item3 = Item.objects.create(
+            title='Item 3',
+            description='Description 3',
+            stock_number=10,
+            real_price=20,
+            game_currency_price=200,
+        )
 
-    def test_purchase_item_authenticated(self):
-        self.client.force_authenticate(user=self.user)
-        response = self.client.post(self.purchase_url(self.item.id))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        item = Item.objects.get(id=self.item.id)
-        self.assertEqual(item.stock_number, 4)  # Stock should decrease by 1
+    def test_list_items(self):
+        # Solicitud GET
+        response = self.client.get('/items/')
 
-    def test_purchase_item_out_of_stock(self):
-        self.item.stock_number = 0
-        self.item.save()
-        self.client.force_authenticate(user=self.user)
-        response = self.client.post(self.purchase_url(self.item.id))
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Verificació del codi de resposta
+        self.assertEqual(response.status_code, 200)
 
-    def test_purchase_item_not_found(self):
-        self.client.force_authenticate(user=self.user)
-        response = self.client.post(self.purchase_url(999))  # Assuming 999 is a non-existent ID
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        data = response.json()
 
-    def test_purchase_item_unauthenticated(self):
-        response = self.client.post(self.purchase_url(self.item.id))
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-"""
+        # Verifica clau 'items' a la resposta
+        self.assertIn('items', data)
+
+        # Obtenim la llista
+        items_list = data['items']
+
+        # Verifiquem que es retornin els 2 items amb stock
+        self.assertEqual(len(items_list), 2)
+
+        # Verifiquem que els items retornats siguin els correctes
+        serializer = ItemSerializer([self.item1, self.item3], many=True)
+        self.assertEqual(items_list, serializer.data)
+
+
+class PurchaseItemTest(TestCase):
+    def setUp(self):
+        # Configurem user i token per fer la crida
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(username='testuser', password='testpassword', coins=1000)
+        self.token = Token.objects.create(user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
+
+        # Creem item per la prova
+        self.item = Item.objects.create(
+            title='test_item',
+            description='abcd',
+            stock_number=10,
+            real_price=10,
+            game_currency_price=100,
+        )
+
+    def test_purchase_item(self):
+        # Solicitud POST
+        response = self.client.post(f'/items/purchase/{self.item.id}/')
+
+        # Verificació del codi de resposta
+        self.assertEqual(response.status_code, 200)
+
+        # Verificació del tipus de l'usuari
+        self.assertIsInstance(self.user, CustomUser)
+
+        # Verifiquem que s'hagi realitzat la compra
+        self.item.refresh_from_db()
+        self.user.refresh_from_db()
+        self.assertEqual(self.item.stock_number, 9)
+        self.assertEqual(self.user.coins, 1000 - self.item.game_currency_price)
+
+        # Verifiquem que s'hagi creat un ItemPurchased
+        self.assertTrue(ItemPurchased.objects.filter(user=self.user, item=self.item).exists())

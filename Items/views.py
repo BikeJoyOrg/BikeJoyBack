@@ -1,11 +1,17 @@
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from rest_framework.decorators import api_view
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from .forms import ItemForm
 from .models import Item, ItemPurchased
+from .models import CustomUser
 from .serializers import ItemSerializer
 
 
@@ -17,21 +23,29 @@ def list_items(request):
 
 
 @api_view(['POST'])
+@csrf_exempt
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def purchase_item(request, item_id):
-    if request.user.is_authenticated:
-        try:
-            item = Item.objects.get(id=item_id)
-            if item.stock_number < 1:
-                return Response({'error': 'Item out of stock'}, status=400)
-            item.stock_number -= 1
-            item.save()
+    user = request.user
+    print(type(request.user))
+    try:
+        item = Item.objects.get(id=item_id)
+        if item.stock_number < 1:
+            return Response({'error': 'Item out of stock'}, status=400)
+        if user.coins < item.game_currency_price:
+            return Response({'error': 'Not enough coins'}, status=400)
 
-            item_purchased = ItemPurchased(item=item, user=request.user)
-            item_purchased.save()
+        item.stock_number -= 1
+        item.save()
 
-            return Response(status=200)
-        except ObjectDoesNotExist:
-            return Response({'error': 'Item not found'}, status=404)
-    else:
-        return Response({'error': 'User not authenticated'}, status=401)
+        item_purchased = ItemPurchased(item=item, user=user)
+        item_purchased.save()
+
+        user.coins -= item.game_currency_price
+        user.save()
+
+        return Response(status=200)
+    except ObjectDoesNotExist:
+        return Response({'error': 'Item not found'}, status=404)
 

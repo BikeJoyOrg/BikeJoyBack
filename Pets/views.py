@@ -21,13 +21,13 @@ from Pets.serializers import MascotaSerializer, MascotaAconseguidaSerializer
 def get_mascota(request, name):
     pets = Mascota.objects.get(name=name)
     serializer = MascotaSerializer(pets, many=False)
-    return Response({'mascota': serializer.data}, status=200)
+    return Response(serializer.data, status=200)
 
 @api_view(['GET'])
 def get_mascotas(request):
     pets = Mascota.objects.all()
     serializer = MascotaSerializer(pets, many=True)
-    return Response({'mascotes': serializer.data}, status=200)
+    return Response(serializer.data, status=200)
 
 
 @api_view(['GET'])
@@ -35,7 +35,7 @@ def get_mascotas_aconseguides_usuari(request):
     try:
         pets = MascotaAconseguida.objects.filter(nicknameUsuari=request.user)
         serializer = MascotaAconseguidaSerializer(pets, many=True)
-        return JsonResponse({'mascotes': serializer}, status=200)
+        return JsonResponse(serializer.data, status=200)
 
     except Exception as e:
             print(f"Error al obtener información de mascotas aconseguides: {e}")
