@@ -36,7 +36,7 @@ ALLOWED_HOSTS = ['nattech.fib.upc.edu', "127.0.0.1"]
 
 CSRF_TRUSTED_ORIGINS = ['https://nattech.fib.upc.edu',
                         'http://nattech.fib.upc.edu:40360',
-                        '172.16.4.36:8080',
+                        'http://172.16.4.36:8080',
                         'http://nattech.fib.upc.edu']
 
 INSTALLED_APPS = [
@@ -60,7 +60,7 @@ INSTALLED_APPS = [
 CORS_ALLOWED_ORIGINS = [
     'http://nattech.fib.upc.edu:40360',
     'http://nattech.fib.upc.edu',
-    '172.16.4.36:8080',
+    'http://172.16.4.36:8080',
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_METHODS = (
@@ -123,6 +123,16 @@ else:
             }
         }
     else:
+        '''
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+'''
+        # si descomenteu aquesta part i comenteu la de dalt, poderu fer directament les migracions des de la vostra màquina
+
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.postgresql',
@@ -133,18 +143,6 @@ else:
             }
         }
 
-        # si descomenteu aquesta part i comenteu la de dalt, poderu fer directament les migracions des de la vostra màquina
-        '''
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': 'bikejoy',
-                'USER': 'postgres',
-                'HOST': 'nattech.fib.upc.edu',
-                'PORT': '40380',
-            }
-        }
-        '''
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
