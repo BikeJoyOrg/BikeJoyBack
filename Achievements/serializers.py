@@ -7,6 +7,7 @@ class LevelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Level
         fields = ['level', 'description', 'value_required', 'coin_reward', 'pet_reward', 'is_achieved', 'is_redeemed']
+        style = {'format': 'CamelCase'}
 
 
 class AchievementSerializer(serializers.ModelSerializer):
@@ -15,3 +16,4 @@ class AchievementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Achievement
         fields = ['name', 'current_value', 'levels']
+        style = {'format': 'CamelCase'}

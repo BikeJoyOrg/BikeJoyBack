@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Achievement(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, primary_key=True)
     current_value = models.IntegerField()
 
 
@@ -11,6 +11,7 @@ class Level(models.Model):
     description = models.TextField()
     value_required = models.IntegerField()
     coin_reward = models.IntegerField()
+    xp_reward = models.IntegerField()
     pet_reward = models.CharField(max_length=255, null=True, blank=True)
     is_achieved = models.BooleanField(default=False)
     is_redeemed = models.BooleanField(default=False)

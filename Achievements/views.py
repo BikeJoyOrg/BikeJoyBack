@@ -5,7 +5,7 @@ from .serializers import AchievementSerializer
 
 
 @require_http_methods(["GET"])
-def get_achievements(request):
+def get_info_achievements(request):
     try:
         achievements = Achievement.objects.all()
         achievements_serializer = AchievementSerializer(achievements, many=True)
