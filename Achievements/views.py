@@ -20,7 +20,7 @@ def get_info_achievements(request):
 
 
 @csrf_exempt
-@api_view(['POST'])
+@api_view(['PATCH'])
 def update_achievement_value(request, achievement_name):
     try:
         new_value = request.data.get('current_value')
@@ -33,11 +33,11 @@ def update_achievement_value(request, achievement_name):
 
 
 @csrf_exempt
-@api_view(['POST'])
-def update_level_achieved(request, level_id):
+@api_view(['PATCH'])
+def update_level_achieved(request, achievement_name, level):
     try:
         new_value = request.data.get('is_achieved')
-        level = Level.objects.get(id=level_id)
+        level = Level.objects.get(achievement=achievement_name, level=level)
         level.is_achieved = new_value
         level.save()
         return JsonResponse({'message': 'Level achieved status updated successfully'}, status=200)
@@ -46,11 +46,11 @@ def update_level_achieved(request, level_id):
 
 
 @csrf_exempt
-@api_view(['POST'])
-def update_level_redeemed(request, level_id):
+@api_view(['PATCH'])
+def update_level_redeemed(request, achievement_name, level):
     try:
         new_value = request.data.get('is_redeemed')
-        level = Level.objects.get(id=level_id)
+        level = Level.objects.get(achievement=achievement_name, level=level)
         level.is_redeemed = new_value
         level.save()
         return JsonResponse({'message': 'Level redeemed status updated successfully'}, status=200)
