@@ -7,15 +7,13 @@ class GetInfoBikeLanesTest(TestCase):
         # Configura un cliente de prueba
         self.client = Client()
         # Crea datos de prueba
-        self.latlng1 = LatLng.objects.create(latitude=40.714224, longitude=-73.961452)
-        self.latlng2 = LatLng.objects.create(latitude=40.705, longitude=-74.009)
-        self.latlng3 = LatLng.objects.create(latitude=40.71, longitude=-74.01)
-        self.latlng4 = LatLng.objects.create(latitude=40.74, longitude=-74.04)
-        self.latlng5 = LatLng.objects.create(latitude=40.75, longitude=-74.05)
         self.bikeLane1 = BikeLane.objects.create(id="1")
         self.bikeLane2 = BikeLane.objects.create(id="2")
-        self.bikeLane1.lat_lngs.set([self.latlng1, self.latlng2, self.latlng3])
-        self.bikeLane2.lat_lngs.set([self.latlng4, self.latlng5])
+        self.latlng1 = LatLng.objects.create(latitude=40.714224, longitude=-73.961452, bike_lane=self.bikeLane1)
+        self.latlng2 = LatLng.objects.create(latitude=40.705, longitude=-74.009, bike_lane=self.bikeLane1)
+        self.latlng3 = LatLng.objects.create(latitude=40.71, longitude=-74.01, bike_lane=self.bikeLane1)
+        self.latlng4 = LatLng.objects.create(latitude=40.74, longitude=-74.04, bike_lane=self.bikeLane2)
+        self.latlng5 = LatLng.objects.create(latitude=40.75, longitude=-74.05, bike_lane=self.bikeLane2)
 
 
     def test_get_info_bikelanes_content(self):

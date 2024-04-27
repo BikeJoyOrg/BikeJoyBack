@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'Items.apps.ItemsConfig',
     'storages',
     'Pets.apps.PetsConfig',
+    'Achievements.apps.AchievementsConfig',
 ]
 CORS_ALLOWED_ORIGINS = [
     'http://nattech.fib.upc.edu:40360',
@@ -123,16 +124,15 @@ else:
             }
         }
     else:
-        '''
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
                 'NAME': BASE_DIR / 'db.sqlite3',
             }
         }
-'''
-        # si descomenteu aquesta part i comenteu la de dalt, poderu fer directament les migracions des de la vostra màquina
 
+        # si descomenteu aquesta part i comenteu la de dalt, poderu fer directament les migracions des de la vostra màquina
+"""
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.postgresql',
@@ -142,7 +142,7 @@ else:
                 'PORT': '40380',
             }
         }
-
+"""
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

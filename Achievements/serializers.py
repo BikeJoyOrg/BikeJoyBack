@@ -4,16 +4,21 @@ from .models import Achievement
 
 
 class LevelSerializer(serializers.ModelSerializer):
+    valueRequired = serializers.IntegerField(source='value_required')
+    coinReward = serializers.IntegerField(source='coin_reward')
+    petReward = serializers.CharField(source='pet_reward')
+    isAchieved = serializers.BooleanField(source='is_achieved')
+    isRedeemed = serializers.BooleanField(source='is_redeemed')
+
     class Meta:
         model = Level
-        fields = ['level', 'description', 'value_required', 'coin_reward', 'pet_reward', 'is_achieved', 'is_redeemed']
-        style = {'format': 'CamelCase'}
+        fields = ['level', 'description', 'valueRequired', 'coinReward', 'petReward', 'isAchieved', 'isRedeemed']
 
 
 class AchievementSerializer(serializers.ModelSerializer):
     levels = LevelSerializer(many=True, read_only=True)
+    currentValue = serializers.IntegerField(source='current_value')
 
     class Meta:
         model = Achievement
-        fields = ['name', 'current_value', 'levels']
-        style = {'format': 'CamelCase'}
+        fields = ['name', 'currentValue', 'levels']
