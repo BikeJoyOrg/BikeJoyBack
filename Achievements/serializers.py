@@ -23,3 +23,8 @@ class AchievementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Achievement
         fields = ['name', 'currentValue', 'levels']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['levels'] = sorted(representation['levels'], key=lambda x: x['level'])
+        return representation
