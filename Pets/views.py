@@ -90,3 +90,22 @@ def create_mascota_aconseguida(request, name):
         return Response(status=200)
     except ObjectDoesNotExist:
         return Response({'error': 'Mascota not found'}, status=404)
+
+@api_view(['PATCH'])
+@csrf_exempt
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def lvlUp(request, name):
+    user = request.user
+    try:
+        mascota = Mascota.objects.get(name=name)
+        mascota_aconseguida = MascotaAconseguida.objects.get(nomMascota=mascota, nicknameUsuari=user)
+        if(mascota_aconseguida.nivell < 3):
+            mascota_aconseguida.nivell += 1
+        else:
+            return JsonResponse({'message': 'La mascota ya ha alcanzado el nivel máximo'}, status=400)
+        mascota_aconseguida.save()
+
+        return JsonResponse({'message': 'Mascota nivelada correctamente'}, status=200)
+    except Exception as e:
+        return JsonResponse({'message': f'Error al subir de nivel la mascota: {e}'}, status=500)
