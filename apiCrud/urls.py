@@ -23,6 +23,8 @@ urlpatterns = [
     path('', include('Rutes.urls')),
     path('', include('Items.urls')),
     path('users/', include('Users.urls')),
-    path('', include('BikeLanes.urls'))
+    path('', include('BikeLanes.urls')),
+    path('', include('Pets.urls')),
+    path('', include('Achievements.urls'))
 ]
 

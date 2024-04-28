@@ -12,13 +12,17 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 import sys
 from pathlib import Path
+from corsheaders.defaults import default_methods, default_headers
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Acceder a la variable de entorno
-#ESTIC_SERVIDOR = os.getenv('ESTIC_SERVIDOR', False)
+ESTIC_SERVIDOR = os.getenv('ESTIC_SERVIDOR', False) == 'True'
+
+print("ESTIC_SERVIDOR: ", ESTIC_SERVIDOR)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -30,8 +34,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['nattech.fib.upc.edu', "127.0.0.1"]
 
-CSRF_TRUSTED_ORIGINS = ['https://nattech.fib.upc.edu']
-# Application definition
+CSRF_TRUSTED_ORIGINS = ['https://nattech.fib.upc.edu',
+                        'http://nattech.fib.upc.edu:40360',
+                        'http://172.16.4.36:8080',
+                        'http://nattech.fib.upc.edu',
+                        'http://127.0.0.1:8000'
+                        ]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -41,15 +49,30 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
+    "Users",
     'Rutes.apps.RutesConfig',
-    'Users.apps.UsersConfig',
     'Stations.apps.StationsConfig',
     'BikeLanes.apps.BikelanesConfig',
     'Items.apps.ItemsConfig',
+    'storages',
+    'Pets.apps.PetsConfig',
+    'Achievements.apps.AchievementsConfig',
 ]
-
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGINS = [
+    'http://nattech.fib.upc.edu:40360',
+    'http://nattech.fib.upc.edu',
+    'http://172.16.4.36:8080',
+]
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_METHODS = (
+    *default_methods,
+)
+CORS_ALLOW_HEADERS = (
+    *default_headers,
+)
+CORS_ALLOW_CREDENTIALS = True
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -81,6 +104,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'apiCrud.wsgi.application'
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 if 'test' in sys.argv:
     DATABASES = {
@@ -90,44 +115,37 @@ if 'test' in sys.argv:
         }
     }
 else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+    if ESTIC_SERVIDOR:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': 'bikejoy',
+                'USER': 'postgres',
+                'HOST': '172.16.4.38',
+                'PORT': '8080',
+            }
         }
-    }
-'''
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-if ESTIC_SERVIDOR:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'bikejoy',
-            'USER': 'postgres',
-            'HOST': '172.16.4.38',
-            'PORT': '8080',
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
         }
-    }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+
+        # si descomenteu aquesta part i comenteu la de dalt, poderu fer directament les migracions des de la vostra màquina
+"""
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': 'bikejoy',
+                'USER': 'postgres',
+                'HOST': 'nattech.fib.upc.edu',
+                'PORT': '40380',
+            }
         }
-    }
-    
-    # si descomenteu aquesta part i comenteu la de dalt, poderu fer directament les migracions des de la vostra màquina
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'bikejoy',
-            'USER': 'postgres',
-            'HOST': 'nattech.fib.upc.edu',
-            'PORT': '40380',
-        }
-    }
-'''
+"""
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -161,14 +179,74 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_ROOT = BASE_DIR / 'media'
 
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'auth.User'
+AUTH_USER_MODEL = 'Users.CustomUser'
+
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID', '')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY', '')
+
+AWS_STORAGE_BUCKET_NAME = 'pes-bikejoy'  # - Enter your S3 bucket name HERE
+
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+
+AWS_S3_FILE_OVERWRITE = False
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+'''
+STORAGES = {
+
+    # Media file (image) management
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+    },
+
+    # CSS and JS file management
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+    },
+}
+
+WHITENOISE_KEEP_ONLY_HASHED_FILES = True
+'''
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication'
+    ],
+}
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs.log'),  # Ruta a tu archivo de registro
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'INFO',  # Nivel INFO para el logger 'django'
+            'propagate': True,
+        },
+        'Users': {  # Nombre de tu aplicación
+            'handlers': ['file'],
+            'level': 'DEBUG',  # Nivel DEBUG para tu aplicación
+            'propagate': False,  # No propagar más allá de este logger
+        },
+    },
+}
