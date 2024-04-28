@@ -48,11 +48,11 @@ def get_mascotas_aconseguides_usuari(request):
     try:
         pets = MascotaAconseguida.objects.filter(nicknameUsuari=user)
         serializer = MascotaAconseguidaSerializer(pets, many=True)
-        return JsonResponse(serializer.data, status=200)
+        return JsonResponse(serializer.data, safe=False, status=200)
 
     except Exception as e:
-            print(f"Error al obtener información de mascotas aconseguides: {e}")
-            return JsonResponse({'message': 'Error al obtener información de mascotas aconseguides'}, status=500)
+        print(f"Error al obtener información de mascotas aconseguides: {e}")
+        return JsonResponse({'message': f'Error al obtener información de mascotas aconseguides: {str(e)}'}, status=500)
 
 @api_view(['PATCH'])
 @csrf_exempt
