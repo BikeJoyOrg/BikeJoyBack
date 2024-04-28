@@ -159,6 +159,15 @@ def average_rating(request, rute_id):
     except Rutes.DoesNotExist:
         return Response({'error': 'Route not found'}, status=404)
 
+@api_view(['GET'])
+def get_route_comments(request, rute_id):
+    try:
+        rute = Rutes.objects.get(id=rute_id)
+        comments = Comentario.objects.filter(ruta=rute)
+        return Response({'route_id': rute_id, 'comments': comments})
+    except Rutes.DoesNotExist:
+        return Response({'error': 'Route not found'}, status=404)
+
 def punts_intermedis_list(request, rute_id):
     if request.method == 'GET':
         punts_intermedis = PuntsIntermedis.objects.filter(RuteId=rute_id).select_related('PuntId').order_by('PuntOrder')
