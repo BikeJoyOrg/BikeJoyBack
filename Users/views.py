@@ -9,10 +9,9 @@ from .forms import CustomUserCreationForm
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth import get_user_model
-
-import logging
-
-logger = logging.getLogger(__name__)
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import authentication_classes, permission_classes
 
 
 @csrf_exempt
@@ -57,25 +56,10 @@ def login_view(request):
 
 @csrf_exempt
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def logout_view(request):
-    logger.debug("entro a logout_view")
-    auth_token = request.META.get('HTTP_AUTHORIZATION', '').split(' ')[-1]
-    logger.debug(request.META.get('HTTP_AUTHORIZATION', '').split(' '))
-    logger.debug(request.headers.get('Authorization'))
-    if not auth_token:
-        return Response({'error': 'No token provided'}, status=400)
-
-    try:
-        token = Token.objects.get(key=auth_token)
-    except Token.DoesNotExist:
-        return Response({'error': 'Invalid token'}, status=400)
-
-    User = get_user_model()
-    try:
-        user = User.objects.get(id=token.user_id)
-    except User.DoesNotExist:
-        return Response({'error': 'User not found'}, status=400)
-
+    token = request.auth
     # Delete the token
     token.delete()
 
@@ -86,11 +70,8 @@ def logout_view(request):
 
 
 @api_view(['GET'])
-def get_user(request, username):
-    try:
-        user = CustomUser.objects.get(username=username)
-    except CustomUser.DoesNotExist:
-        return Response({'error': 'User not found'}, status=404)
+def get_user(request):
+    user = request.user
 
     user_data = {
         'username': user.username,
