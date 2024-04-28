@@ -5,10 +5,16 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from django.db.models import Q
 from math import radians, sin, cos, sqrt, atan2
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from django.core.exceptions import ObjectDoesNotExist
 
 
-from Rutes.models import Rutes, Punts, PuntsIntermedis
-from Rutes.serializers import RutesSerializer, PuntsSerializer, PuntsIntermedisSerializer
+from Rutes.models import Rutes, Punts, PuntsIntermedis, Valoracio, Comentario, RutesCompletades
+from Rutes.serializers import RutesSerializer, PuntsSerializer, PuntsIntermedisSerializer, \
+    CompletedRoutesSerializer
 
 
 def get_coords_for_zona(nombreZona):
@@ -86,6 +92,72 @@ def rutesApi(request):
             return JsonResponse(rutes_serializer.data, status=201)
         return JsonResponse("Error al guardar ruta", safe=False, status=400)
 
+
+@api_view(['POST'])
+@csrf_exempt
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def rank_route(request, rute_id):
+    user = request.user
+    try:
+        rute = Rutes.objects.get(RuteId=rute_id)
+        mark = request.data.get('mark')
+        if mark is None or mark < 1 or mark > 5:
+            return Response({'error': 'Invalid mark'}, status=400)
+
+        valoracio = Valoracio.objects.filter(ruta=rute, user=user).first()
+        if valoracio:
+            valoracio.mark = mark
+            valoracio.save()
+        else:
+            valoracio = Valoracio(ruta=rute, user=user, mark=mark)
+            valoracio.save()
+
+        return Response(status=200)
+    except ObjectDoesNotExist:
+        return Response({'error': 'Route not found'}, status=404)
+
+@api_view(['POST'])
+@csrf_exempt
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def comment_route(request, rute_id):
+    user = request.user
+    try:
+        rute = Rutes.objects.get(RuteId=rute_id)
+        text = request.data.get('text')
+        if text is None:
+            return Response({'error': 'Invalid text'}, status=400)
+
+        comentario = Comentario(ruta=rute, user=user, text=text)
+        comentario.save()
+
+        return Response(status=200)
+    except ObjectDoesNotExist:
+        return Response({'error': 'Route not found'}, status=404)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def completed_routes_view(request):
+    completed_routes = RutesCompletades.objects.filter(user=request.user)
+    serializer = CompletedRoutesSerializer(completed_routes, many=True, context={'request': request})
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def average_rating(request, rute_id):
+    try:
+        rute = Rutes.objects.get(id=rute_id)
+        average = Valoracio.objects.filter(ruta=rute).aggregate(Avg('mark'))['mark__avg']
+        if average is not None:
+            rounded_average = round(average + 0.5)
+        else:
+            rounded_average = "No ratings yet"
+
+        return Response({'route_id': rute_id, 'average_rating': rounded_average})
+    except Rutes.DoesNotExist:
+        return Response({'error': 'Route not found'}, status=404)
 
 def punts_intermedis_list(request, rute_id):
     if request.method == 'GET':

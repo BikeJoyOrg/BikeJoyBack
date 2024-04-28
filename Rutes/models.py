@@ -1,6 +1,7 @@
 from django.db import models
 
 import Users
+from Users.models import CustomUser
 
 
 # Create your models here.
@@ -40,29 +41,23 @@ class PuntsIntermedis(models.Model):
         unique_together = ('PuntOrder', 'RuteId', 'PuntId')
 
 class Valoracio(models.Model):
-    Ruta = models.ForeignKey(Rutes, on_delete=models.CASCADE, related_name='valoracio')
-    Usuari = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='valoracio')
-    Nota = models.IntegerField()
-    Data = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ['Ruta', 'Usuari']
+    id = models.AutoField(primary_key=True)
+    ruta = models.ForeignKey(Rutes, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    mark = models.IntegerField()
+    date_ranked = models.DateTimeField(auto_now_add=True)
 
 
 class Comentario(models.Model):
-    Ruta = models.ForeignKey(Rutes, on_delete=models.CASCADE, related_name='comentario')
-    Usuari = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='comentario')
-    Contingut = models.TextField()
-    Data = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ['Ruta', 'Usuari']
+    id = models.AutoField(primary_key=True)
+    ruta = models.ForeignKey(Rutes, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    text = models.TextField()
+    date_posted = models.DateTimeField(auto_now_add=True)
 
 
 class RutesCompletades(models.Model):
-    Ruta = models.ForeignKey(Rutes, on_delete=models.CASCADE)
-    Usuari = models.ForeignKey(Users, on_delete=models.CASCADE)
-    Data = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ['Ruta', 'Usuari']
+    id = models.AutoField(primary_key=True)
+    ruta = models.ForeignKey(Rutes, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    date_completed = models.DateTimeField(auto_now_add=True)

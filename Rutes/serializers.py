@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from Rutes.models import Rutes, Punts, PuntsIntermedis
+from Rutes.models import Rutes, Punts, PuntsIntermedis, RutesCompletades, Valoracio
 
 
 class RutesSerializer(serializers.ModelSerializer):
@@ -15,6 +15,16 @@ class RutesSerializer(serializers.ModelSerializer):
                     'PuntIniciLat',
                     'PuntIniciLong',)
 
+class CompletedRoutesSerializer(serializers.ModelSerializer):
+    rated = serializers.SerializerMethodField()
+
+    class Meta:
+        model = RutesCompletades
+        fields = ['ruta_id', 'rated']
+
+    def get_rated(self, obj):
+        user = self.context['request'].user
+        return Valoracio.objects.filter(ruta=obj.ruta, user=user).exists()
 
 class PuntsSerializer(serializers.ModelSerializer):
     class Meta:
