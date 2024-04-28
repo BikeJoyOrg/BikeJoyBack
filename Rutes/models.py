@@ -45,7 +45,6 @@ class Valoracio(models.Model):
     ruta = models.ForeignKey(Rutes, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     mark = models.IntegerField()
-    date_ranked = models.DateTimeField(auto_now_add=True)
 
 
 class Comentario(models.Model):
@@ -53,7 +52,6 @@ class Comentario(models.Model):
     ruta = models.ForeignKey(Rutes, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     text = models.TextField()
-    date_posted = models.DateTimeField(auto_now_add=True)
 
 
 class RutesCompletades(models.Model):
