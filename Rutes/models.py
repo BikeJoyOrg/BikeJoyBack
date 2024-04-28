@@ -18,7 +18,7 @@ class Rutes(models.Model):
     RuteRating = models.IntegerField(null=True)
     PuntIniciLat = models.FloatField(null = True)
     PuntIniciLong = models.FloatField(null = True)
-    Completada_por = models.ManyToManyField(Users, through='RutesCompletades')
+
 
 
 
@@ -38,11 +38,13 @@ class PuntsIntermedis(models.Model):
         unique_together = ('PuntOrder', 'RuteId', 'PuntId')
 
 class Valoracio(models.Model):
-    ValoracioId = models.AutoField(primary_key=True)
-    RuteId = models.ForeignKey(Rutes, on_delete=models.CASCADE)
-    # UserId = models.IntegerField()
-    Valoracio = models.IntegerField()
-    # Comentari = models.CharField(max_length=50)
+    Ruta = models.ForeignKey(Rutes, on_delete=models.CASCADE, related_name='valoracio')
+    Usuari = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='valoracio')
+    Nota = models.IntegerField()
+    Data = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['Ruta', 'Usuari']
 
 
 class Comentario(models.Model):
