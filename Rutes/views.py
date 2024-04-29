@@ -156,7 +156,7 @@ def average_rating(request, rute_id):
         else:
             rounded_average = "No ratings yet"
 
-        return Response({'route_id': rute_id, 'average_rating': rounded_average})
+        return Response({'average_rating': rounded_average})
     except Rutes.DoesNotExist:
         return Response({'error': 'Route not found'}, status=404)
 
@@ -165,7 +165,7 @@ def get_route_comments(request, rute_id):
     try:
         rute = Rutes.objects.get(id=rute_id)
         comments = Comentario.objects.filter(ruta=rute)
-        return Response({'route_id': rute_id, 'comments': comments})
+        return Response({'comments': comments})
     except Rutes.DoesNotExist:
         return Response({'error': 'Route not found'}, status=404)
 
