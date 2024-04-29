@@ -154,7 +154,7 @@ def average_rating(request, rute_id):
         if average is not None:
             rounded_average = round(average + 0.5)
         else:
-            rounded_average = "No ratings yet"
+            rounded_average = 0
 
         return Response({'average_rating': rounded_average})
     except Rutes.DoesNotExist:
