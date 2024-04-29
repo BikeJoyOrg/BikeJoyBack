@@ -69,7 +69,10 @@ def logout_view(request):
     return Response(200)
 
 
+@csrf_exempt
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def get_user(request):
     user = request.user
 
