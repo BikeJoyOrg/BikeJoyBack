@@ -23,9 +23,9 @@ def list_items(request):
 
 
 @api_view(["GET"])
-def list_purchased_items(request, user_id):
+def list_purchased_items(request, username):
     try:
-        user = CustomUser.objects.get(id=user_id)
+        user = CustomUser.objects.get(username=username)
         purchased_items = ItemPurchased.objects.filter(user=user)
         serializer = ItemPurchasedSerializer(purchased_items, many=True)
         return Response({'purchased_items': serializer.data}, status=200)

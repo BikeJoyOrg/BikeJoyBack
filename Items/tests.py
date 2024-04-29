@@ -125,7 +125,7 @@ class ListPurchasedItemsTest(TestCase):
 
     def test_list_purchased_items(self):
         # Solicitud GET
-        response = self.client.get(f'/user/purchases/{self.user.id}/')
+        response = self.client.get(f'/user/purchases/{self.user.username}/')
 
         # Verificació status resposta
         self.assertEqual(response.status_code, 200)
