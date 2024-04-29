@@ -15,4 +15,4 @@ class ItemSerializer(serializers.ModelSerializer):
 class ItemPurchasedSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemPurchased
-        fields = "__all__"
+        fields = ("id", "item_title", "item_purchased_price", "date_purchased")
