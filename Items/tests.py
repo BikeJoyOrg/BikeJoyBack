@@ -9,7 +9,7 @@ from Users.models import CustomUser
 from .models import Item, ItemPurchased
 import factory
 
-from .serializers import ItemSerializer
+from .serializers import ItemSerializer, ItemPurchasedSerializer
 
 
 class ListItemsTest(TestCase):
@@ -96,4 +96,48 @@ class PurchaseItemTest(TestCase):
         self.assertEqual(self.user.coins, 1000 - self.item.game_currency_price)
 
         # Verifiquem que s'hagi creat un ItemPurchased
-        self.assertTrue(ItemPurchased.objects.filter(user=self.user, item=self.item).exists())
+        self.assertTrue(ItemPurchased.objects.filter(
+            user=self.user,
+            item_title=self.item.title,
+            item_purchased_price=self.item.game_currency_price
+        ).exists())
+
+
+class ListPurchasedItemsTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(username='testuser', password='testpassword', coins=1000)
+        self.item_purchased1 = ItemPurchased.objects.create(
+            item_title='Item 1',
+            item_purchased_price=10,
+            user=self.user,
+        )
+        self.item_purchased2 = ItemPurchased.objects.create(
+            item_title='Item 2',
+            item_purchased_price=15,
+            user=self.user,
+        )
+        self.item_purchased3 = ItemPurchased.objects.create(
+            item_title='Item 3',
+            item_purchased_price=20,
+            user=self.user,
+        )
+
+    def test_list_purchased_items(self):
+        # Solicitud GET
+        response = self.client.get(f'/user/purchases/{self.user.id}/')
+
+        # Verificació status resposta
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+
+        # Comprobació clau 'purchased_items' a la resposta
+        self.assertIn('purchased_items', data)
+
+        # Comprovar que es retornin els 3 items comprats
+        purchased_items_list = data['purchased_items']
+        self.assertEqual(len(purchased_items_list), 3)
+        serializer = ItemPurchasedSerializer([self.item_purchased1, self.item_purchased2, self.item_purchased3],
+                                             many=True)
+        self.assertEqual(purchased_items_list, serializer.data)
