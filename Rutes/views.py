@@ -15,7 +15,7 @@ from django.db.models import Avg
 
 from Rutes.models import Rutes, Punts, PuntsIntermedis, Valoracio, Comentario, RutesCompletades
 from Rutes.serializers import RutesSerializer, PuntsSerializer, PuntsIntermedisSerializer, \
-    CompletedRoutesSerializer
+    CompletedRoutesSerializer, ComentarioSerializer
 
 
 def get_coords_for_zona(nombreZona):
