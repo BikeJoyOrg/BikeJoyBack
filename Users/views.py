@@ -84,3 +84,17 @@ def get_user(request):
     }
 
     return Response(user_data, status=200)
+@csrf_exempt
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def actualitzar_stats(request):
+    user = request.user
+    data = request.data
+    try:
+        user.distance = data['distance']
+    except KeyError:
+        return JsonResponse({'status': 'error', 'message': 'No se proporcionó la distancia'}, status=400)
+    user.save()
+    return JsonResponse({'status': 'success update'}, status=200)
+
