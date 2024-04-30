@@ -21,7 +21,7 @@ class Mascota(models.Model):
 class MascotaAconseguida(models.Model):
     nomMascota = models.ForeignKey(Mascota, on_delete=models.CASCADE)
     nicknameUsuari = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    nivell = models.IntegerField(default=1)
+    nivell = models.IntegerField(default=0)
     equipada = models.BooleanField(default=False)
 
     class Meta:

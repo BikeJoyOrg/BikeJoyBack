@@ -48,7 +48,7 @@ def get_mascotas_aconseguides_usuari(request):
     try:
         pets = MascotaAconseguida.objects.filter(nicknameUsuari=user)
         serializer = MascotaAconseguidaSerializer(pets, many=True)
-        return JsonResponse(serializer.data, safe=False, status=200)
+        return JsonResponse(serializer.data, safe = False ,status=200)
 
     except Exception as e:
         print(f"Error al obtener información de mascotas aconseguides: {e}")

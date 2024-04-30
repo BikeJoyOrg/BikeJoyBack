@@ -15,7 +15,7 @@ from django.db.models import Avg
 
 from Rutes.models import Rutes, Punts, PuntsIntermedis, Valoracio, Comentario, RutesCompletades
 from Rutes.serializers import RutesSerializer, PuntsSerializer, PuntsIntermedisSerializer, \
-    CompletedRoutesSerializer
+    CompletedRoutesSerializer, ComentarioSerializer
 
 
 def get_coords_for_zona(nombreZona):
@@ -149,25 +149,27 @@ def completed_routes_view(request):
 @api_view(['GET'])
 def average_rating(request, rute_id):
     try:
-        rute = Rutes.objects.get(id=rute_id)
+        rute = Rutes.objects.get(RuteId=rute_id)
         average = Valoracio.objects.filter(ruta=rute).aggregate(Avg('mark'))['mark__avg']
         if average is not None:
             rounded_average = round(average + 0.5)
         else:
-            rounded_average = "No ratings yet"
+            rounded_average = 0
 
-        return Response({'route_id': rute_id, 'average_rating': rounded_average})
+        return Response(rounded_average)
     except Rutes.DoesNotExist:
         return Response({'error': 'Route not found'}, status=404)
 
 @api_view(['GET'])
 def get_route_comments(request, rute_id):
     try:
-        rute = Rutes.objects.get(id=rute_id)
+        rute = Rutes.objects.get(RuteId=rute_id)
         comments = Comentario.objects.filter(ruta=rute)
-        return Response({'route_id': rute_id, 'comments': comments})
+        serializer = ComentarioSerializer(comments, many=True)
+        return Response(serializer.data)
     except Rutes.DoesNotExist:
         return Response({'error': 'Route not found'}, status=404)
+
 
 def punts_intermedis_list(request, rute_id):
     if request.method == 'GET':

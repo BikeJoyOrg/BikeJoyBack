@@ -3,7 +3,7 @@ import os
 
 from django.conf import settings
 from rest_framework import serializers
-from .models import Item
+from .models import Item, ItemPurchased
 
 
 class ItemSerializer(serializers.ModelSerializer):
@@ -11,3 +11,8 @@ class ItemSerializer(serializers.ModelSerializer):
         model = Item
         fields = "__all__"
 
+
+class ItemPurchasedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemPurchased
+        fields = ("id", "item_title", "item_purchased_price", "date_purchased")
