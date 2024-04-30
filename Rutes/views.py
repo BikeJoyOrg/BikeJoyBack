@@ -165,9 +165,11 @@ def get_route_comments(request, rute_id):
     try:
         rute = Rutes.objects.get(RuteId=rute_id)
         comments = Comentario.objects.filter(ruta=rute)
-        return Response(comments)
+        serializer = ComentarioSerializer(comments, many=True)
+        return Response(serializer.data)
     except Rutes.DoesNotExist:
         return Response({'error': 'Route not found'}, status=404)
+
 
 def punts_intermedis_list(request, rute_id):
     if request.method == 'GET':
