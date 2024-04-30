@@ -1,3 +1,4 @@
+"""""
 from django.core.management import call_command
 from django.forms import model_to_dict
 from django.test import TestCase
@@ -107,3 +108,6 @@ class TestCommands(TestCase):
         self.assertEqual(station_2.mechanical, 2)
         self.assertEqual(station_2.ebike, 1)
         self.assertEqual(station_2.num_docks_available, 7)
+        
+        
+        """""

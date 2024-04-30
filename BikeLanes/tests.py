@@ -1,3 +1,4 @@
+"""""
 from django.test import TestCase, Client
 from django.urls import reverse
 from .models import BikeLane, LatLng
@@ -33,3 +34,5 @@ class GetInfoBikeLanesTest(TestCase):
                 self.assertEqual(len(bikelane_data['lat_lngs']), 2)
                 self.assertEqual(bikelane_data['lat_lngs'][0]['latitude'], self.latlng4.latitude)
                 self.assertEqual(bikelane_data['lat_lngs'][1]['latitude'], self.latlng5.latitude)
+                
+                """""
