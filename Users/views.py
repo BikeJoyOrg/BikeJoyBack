@@ -23,7 +23,7 @@ def register(request):
         return Response({'error': 'Username already exists'}, status=400)
     if form.is_valid():
         form.save()
-        return JsonResponse({'status': 'success register'}, status=200)
+        return Response(status=200)
     else:
         return Response({'error': form.errors}, status=400)
 
@@ -31,8 +31,6 @@ def register(request):
 @csrf_exempt
 @api_view(['POST'])
 def login_view(request):
-    if request.method != 'POST':
-        return Response({'error': 'Only POST requests are allowed'}, status=400)
     username = request.POST['username']
     password = request.POST['password']
     user = authenticate(username=username, password=password)
@@ -40,8 +38,7 @@ def login_view(request):
     if user is not None:
         login(request, user)
         token, created = Token.objects.get_or_create(user=user)
-        return JsonResponse({
-            'status': 'success login',
+        return Response({
             'token': token.key,
             'user': {
                 'username': user.username,
@@ -73,7 +70,7 @@ def logout_view(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def get_user(request):
+def getProfile(request):
     user = request.user
 
     user_data = {
