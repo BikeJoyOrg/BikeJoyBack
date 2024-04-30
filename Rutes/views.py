@@ -149,7 +149,7 @@ def completed_routes_view(request):
 @api_view(['GET'])
 def average_rating(request, rute_id):
     try:
-        rute = Rutes.objects.get(id=rute_id)
+        rute = Rutes.objects.get(Ruteid=rute_id)
         average = Valoracio.objects.filter(ruta=rute).aggregate(Avg('mark'))['mark__avg']
         if average is not None:
             rounded_average = round(average + 0.5)
@@ -163,7 +163,7 @@ def average_rating(request, rute_id):
 @api_view(['GET'])
 def get_route_comments(request, rute_id):
     try:
-        rute = Rutes.objects.get(id=rute_id)
+        rute = Rutes.objects.get(Ruteid=rute_id)
         comments = Comentario.objects.filter(ruta=rute)
         return Response(comments)
     except Rutes.DoesNotExist:
