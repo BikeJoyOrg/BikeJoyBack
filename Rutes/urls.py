@@ -13,4 +13,6 @@ urlpatterns = [
     path('routes/<int:rute_id>/comments/', views.get_route_comments, name='get_route_comments'),
     path('routes/comment/<int:rute_id>/', views.comment_route, name='comment_route'),
     path('routes/rank/<int:rute_id>/', views.rank_route, name='rank_route'),
+    path('routes/completed/<int:rute_id>/', views.ruta_completada, name='complete_route'),
+    path('routes/punt_visitat/', views.punts_visitats, name='punts_visitats'),
 ]

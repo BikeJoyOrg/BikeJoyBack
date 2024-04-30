@@ -13,7 +13,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Avg
 
 
-from Rutes.models import Rutes, Punts, PuntsIntermedis, Valoracio, Comentario, RutesCompletades
+from Rutes.models import Rutes, Punts, PuntsIntermedis, Valoracio, Comentario, RutesCompletades, PuntsVisitats
 from Rutes.serializers import RutesSerializer, PuntsSerializer, PuntsIntermedisSerializer, \
     CompletedRoutesSerializer, ComentarioSerializer
 
@@ -55,6 +55,8 @@ def haversine(lon1, lat1, lon2, lat2):
 
 # Create your views here.
 @csrf_exempt
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def rutesApi(request):
     if request.method == 'GET':
         distance = request.GET.get('distance')
@@ -86,7 +88,9 @@ def rutesApi(request):
         rutes_serializer = RutesSerializer(rutes, many=True)
         return JsonResponse(rutes_serializer.data, safe=False)
     elif request.method == 'POST':
+        user = request.user
         data = JSONParser().parse(request)
+        data['creador'] = user.pk
         rutes_serializer = RutesSerializer(data=data)
         if rutes_serializer.is_valid():
             rutes_serializer.save()
@@ -219,8 +223,60 @@ def AfegirPuntRuta(request):
     else:
         return JsonResponse({'message': 'Método HTTP no permitido'}, status=405)
 
+@csrf_exempt
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def ruta_completada(request, rute_id):
+    user = request.user
+    if request.method == 'POST':
+        request_data = JSONParser().parse(request)
+        ruta = Rutes.objects.get(RuteId=rute_id)
+        ruta_completada, created = RutesCompletades.objects.get_or_create(
+            ruta=ruta,
+            user=user,
+            defaults={
+                'temps': request_data['temps'],
+            }
+        )
+        if created:
+            response_data = {'message': 'Ruta completada guardada correctamente'}
+            return JsonResponse(response_data, status=201)
+        return JsonResponse("Error al guardar ruta completada", status=400)
 
+@csrf_exempt
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def punts_visitats(request):
+    #get para todos los puntos visitados de un usuario
+    if request.method == 'GET':
+        user = request.user
+        punts_visitats = PuntsVisitats.objects.filter(user=user)
+        punts_visitats = Punts.objects.filter(puntsvisitats__in=punts_visitats)
+        punts_visitats = PuntsSerializer(punts_visitats, many=True)
+        return JsonResponse(punts_visitats.data, safe=False)
+    elif request.method == 'POST':
+        user = request.user
+        request_data = JSONParser().parse(request)
+        punt, created = Punts.objects.get_or_create(
+            PuntLat=request_data['PuntLat'],
+            PuntLong=request_data['PuntLong'],
+            defaults={
+                'PuntName': request_data['PuntName'],
+            }
+        )
+        punt_visitat, created_visitat = PuntsVisitats.objects.get_or_create(
+            punt=punt,
+            user=user,
+        )
 
+        # Si se creó el punto intermedio correctamente, retornar un mensaje adecuado
+        if created_visitat:
+            response_data = {'message': 'Punto visitado creado correctamente'}
+        else:
+            response_data = {'message': 'Punto visitado actualizado correctament'}
+
+        return JsonResponse(response_data, status=200)
+    return JsonResponse("Error al guardar punt visitat", safe=False)
 
 
 """
