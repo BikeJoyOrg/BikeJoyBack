@@ -30,7 +30,7 @@ def register(request):
 
 @csrf_exempt
 @api_view(['POST'])
-def login(request):
+def login_view(request):
     username = request.POST['username']
     password = request.POST['password']
     user = authenticate(username=username, password=password)
@@ -55,7 +55,7 @@ def login(request):
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def logout(request):
+def logout_view(request):
     token = request.auth
     # Delete the token
     token.delete()
