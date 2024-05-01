@@ -99,7 +99,6 @@ def rutesApi(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def afegirRuta(request):
-    logger.debug(f"Request: {request.token}")
     user = request.user
     logger.debug(f"User: {user}")
     data = JSONParser().parse(request)
