@@ -19,8 +19,7 @@ class Rutes(models.Model):
     RuteRating = models.IntegerField(null=True)
     PuntIniciLat = models.FloatField(null = True)
     PuntIniciLong = models.FloatField(null = True)
-
-
+    creador = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
 
 class Punts(models.Model):
@@ -59,3 +58,9 @@ class RutesCompletades(models.Model):
     ruta = models.ForeignKey(Rutes, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     date_completed = models.DateTimeField(auto_now_add=True)
+    temps = models.FloatField()
+
+class PuntsVisitats(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    punt = models.ForeignKey(Punts, on_delete=models.CASCADE)

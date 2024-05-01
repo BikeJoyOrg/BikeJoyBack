@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from Rutes.models import Rutes, Punts, PuntsIntermedis, RutesCompletades, Valoracio, Comentario
+from Rutes.models import Rutes, Punts, PuntsIntermedis, RutesCompletades, Valoracio, Comentario, PuntsVisitats
 
 
 class RutesSerializer(serializers.ModelSerializer):
@@ -13,7 +13,8 @@ class RutesSerializer(serializers.ModelSerializer):
                   'RuteTime',
                   'RuteRating',
                     'PuntIniciLat',
-                    'PuntIniciLong',)
+                    'PuntIniciLong',
+                    'creador')
 
 class CompletedRoutesSerializer(serializers.ModelSerializer):
     rated = serializers.SerializerMethodField()
