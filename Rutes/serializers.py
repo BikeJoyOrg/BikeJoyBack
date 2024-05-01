@@ -56,7 +56,7 @@ class RouteSerializer(serializers.ModelSerializer):
     PuntFinalLong = serializers.SerializerMethodField()
     class Meta:
         model = Rutes
-        fields = ['ruta_id', 'RutaName', 'distance_km', 'PuntIniciLat', 'PuntIniciLong', 'PuntFinalLat',
+        fields = ['RuteId', 'RuteName', 'distance_km', 'PuntIniciLat', 'PuntIniciLong', 'PuntFinalLat',
                   'PuntFinalLong']
     def get_distance_km(self, obj):
         return obj.RuteDistance / 1000
