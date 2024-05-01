@@ -241,7 +241,10 @@ def ruta_completada(request, rute_id):
         if created:
             response_data = {'message': 'Ruta completada guardada correctamente'}
             return JsonResponse(response_data, status=201)
-        return JsonResponse("Error al guardar ruta completada", status=400)
+        else:
+            response_data = {'message': 'Ruta completada actualizada correctamente'}
+            return JsonResponse(response_data, status=200)
+    return JsonResponse("Error al guardar ruta completada", status=400)
 
 @csrf_exempt
 @authentication_classes([TokenAuthentication])
