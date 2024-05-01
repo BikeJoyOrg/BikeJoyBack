@@ -101,10 +101,8 @@ def rutesApi(request):
 @permission_classes([IsAuthenticated])
 def afegirRuta(request):
     user = request.user
-    logger.debug(f"User: {user}")
     data = JSONParser().parse(request)
     data['creador'] = user.pk
-    logger.debug(f"Data: {data}")
     rutes_serializer = RutesSerializer(data=data)
     if rutes_serializer.is_valid():
         rutes_serializer.save()
@@ -205,6 +203,7 @@ def AfegirPuntRuta(request):
         try:
             with transaction.atomic():
                 request_data = JSONParser().parse(request)
+                logger.info(f"Request data: {request_data}")
                 ruta = Rutes.objects.get(RuteId=request_data['RuteId'])
                 punt, created = Punts.objects.get_or_create(
                     PuntLat=request_data['PuntLat'],
