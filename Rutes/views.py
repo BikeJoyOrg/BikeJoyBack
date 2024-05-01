@@ -15,7 +15,7 @@ from django.db.models import Avg
 
 from Rutes.models import Rutes, Punts, PuntsIntermedis, Valoracio, Comentario, RutesCompletades, PuntsVisitats
 from Rutes.serializers import RutesSerializer, PuntsSerializer, PuntsIntermedisSerializer, \
-    CompletedRoutesSerializer, ComentarioSerializer
+    CompletedRoutesSerializer, ComentarioSerializer, RouteSerializer
 
 
 def get_coords_for_zona(nombreZona):
@@ -280,6 +280,13 @@ def punts_visitats(request):
 
         return JsonResponse(response_data, status=200)
     return JsonResponse("Error al guardar punt visitat", safe=False)
+
+#Vista servicio API
+@api_view(['GET'])
+def get_routes(request):
+    routes = Rutes.objects.all()
+    serializer = RouteSerializer(routes, many=True)
+    return Response(serializer.data)
 
 
 """

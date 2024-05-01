@@ -23,7 +23,7 @@ from Rutes.views import get_route_comments
 from Rutes.views import completed_routes_view
 
 
-"""""
+
 class RutesApiTestCase(TestCase):
     def setUp(self):
         self.client = Client()
@@ -320,5 +320,3 @@ class CompletedRoutesViewTests(TestCase):
         request.user = self.user
         response = completed_routes_view(request)
         self.assertEqual(response.status_code, 200)
-
-"""""

@@ -15,4 +15,5 @@ urlpatterns = [
     path('routes/rank/<int:rute_id>/', views.rank_route, name='rank_route'),
     path('routes/completed/<int:rute_id>/', views.ruta_completada, name='complete_route'),
     path('routes/punt_visitat/', views.punts_visitats, name='punts_visitats'),
+    path('rutas/', views.get_routes, name='get_routes'),
 ]
