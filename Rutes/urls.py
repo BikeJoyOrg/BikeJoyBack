@@ -5,6 +5,7 @@ from Rutes import views
 
 urlpatterns = [
     path('rutes/', views.rutesApi, name='rutesApi'),
+    path('addruta/', views.afegirRuta, name='afegirRuta'),
     #path('punts/', views.puntsApi, name='puntsApi'),
     path('puntsInterRuta/', views.AfegirPuntRuta, name='puntsIntermedisApi'),
     path('puntos-intermedios/<int:rute_id>/', views.punts_intermedis_list, name='puntos_intermedios'),
@@ -15,5 +16,6 @@ urlpatterns = [
     path('routes/rank/<int:rute_id>/', views.rank_route, name='rank_route'),
     path('routes/completed/<int:rute_id>/', views.ruta_completada, name='complete_route'),
     path('routes/punt_visitat/', views.punts_visitats, name='punts_visitats'),
+    path('routes/add_punt_visitat/', views.add_punts_visitats, name='punts_visitats_ruta'),
     path('rutas/', views.get_routes, name='get_routes'),
 ]

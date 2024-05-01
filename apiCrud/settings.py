@@ -250,5 +250,10 @@ LOGGING = {
             'level': 'DEBUG',  # Nivel DEBUG para tu aplicación
             'propagate': False,  # No propagar más allá de este logger
         },
+        'Rutes': {  # Nombre de tu aplicación
+            'handlers': ['file'],
+            'level': 'DEBUG',  # Nivel DEBUG para tu aplicación
+            'propagate': False,  # No propagar más allá de este logger
+        },
     },
 }
