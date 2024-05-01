@@ -2,6 +2,7 @@ from django.db import transaction
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from environ import logger
 from rest_framework.parsers import JSONParser
 from django.db.models import Q
 from math import radians, sin, cos, sqrt, atan2
@@ -89,8 +90,10 @@ def rutesApi(request):
         return JsonResponse(rutes_serializer.data, safe=False)
     elif request.method == 'POST':
         user = request.user
+        logger.debug(f"User: {user}")
         data = JSONParser().parse(request)
         data['creador'] = user.pk
+        logger.debug(f"Data: {data}")
         rutes_serializer = RutesSerializer(data=data)
         if rutes_serializer.is_valid():
             rutes_serializer.save()
