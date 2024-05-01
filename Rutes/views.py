@@ -1,8 +1,9 @@
+import logging
+
 from django.db import transaction
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from environ import logger
 from rest_framework.parsers import JSONParser
 from django.db.models import Q
 from math import radians, sin, cos, sqrt, atan2
@@ -18,6 +19,7 @@ from Rutes.models import Rutes, Punts, PuntsIntermedis, Valoracio, Comentario, R
 from Rutes.serializers import RutesSerializer, PuntsSerializer, PuntsIntermedisSerializer, \
     CompletedRoutesSerializer, ComentarioSerializer
 
+logger = logging.getLogger(__name__)
 
 def get_coords_for_zona(nombreZona):
     zonas_coords = {
