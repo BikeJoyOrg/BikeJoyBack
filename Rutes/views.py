@@ -197,47 +197,43 @@ def punts_intermedis_list(request, rute_id):
         route_coords = [{'lat': pi.PuntId.PuntLat, 'lng': pi.PuntId.PuntLong} for pi in punts_intermedis]
         return JsonResponse(route_coords, safe=False)
 
-
+@api_view(['POST'])
 @csrf_exempt
 def AfegirPuntRuta(request):
-    if request.method == 'POST':
-        try:
-            with transaction.atomic():
-                request_data = JSONParser().parse(request)
-                ruta = Rutes.objects.get(RuteId=request_data['RuteId'])
-                punt, created = Punts.objects.get_or_create(
-                    PuntLat=request_data['PuntLat'],
-                    PuntLong=request_data['PuntLong'],
-                    defaults={
-                        'PuntName': request_data['PuntName'],
-                    }
-                )
+    try:
+        with transaction.atomic():
+            request_data = JSONParser().parse(request)
+            ruta = Rutes.objects.get(RuteId=request_data['RuteId'])
+            punt, created = Punts.objects.get_or_create(
+                PuntLat=request_data['PuntLat'],
+                PuntLong=request_data['PuntLong'],
+                defaults={
+                    'PuntName': request_data['PuntName'],
+                }
+            )
 
-                # Crear o actualizar el punto intermedio
-                punt_inter, created_inter = PuntsIntermedis.objects.get_or_create(
-                    PuntId=punt,
-                    RuteId=ruta,
-                    PuntOrder=request_data['PuntOrder'],
-                    defaults={
-                        'PuntOrder': request_data['PuntOrder'],
-                    }
-                )
+            # Crear o actualizar el punto intermedio
+            punt_inter, created_inter = PuntsIntermedis.objects.get_or_create(
+                PuntId=punt,
+                RuteId=ruta,
+                PuntOrder=request_data['PuntOrder'],
+                defaults={
+                    'PuntOrder': request_data['PuntOrder'],
+                }
+            )
 
-                # Si se creó el punto intermedio correctamente, retornar un mensaje adecuado
-                if created_inter:
-                    response_data = {'message': 'Punto intermedio creado correctamente'}
-                else:
-                    response_data = {'message': 'Punto intermedio actualizado correctamente'}
+            # Si se creó el punto intermedio correctamente, retornar un mensaje adecuado
+            if created_inter:
+                response_data = {'message': 'Punto intermedio creado correctamente'}
+            else:
+                response_data = {'message': 'Punto intermedio actualizado correctamente'}
 
-            return JsonResponse(response_data, status=200)
-        except Exception as e:
-            # En caso de error, imprimirlo y devolver un mensaje de error
-            print(f"Error al crear/actualizar punt ruta: ")
-            response_data = {'message': 'Error al procesar la solicitud' + str(e)}
-            return JsonResponse(response_data, status=500)
-
-    else:
-        return JsonResponse({'message': 'Método HTTP no permitido'}, status=405)
+        return JsonResponse(response_data, status=200)
+    except Exception as e:
+        # En caso de error, imprimirlo y devolver un mensaje de error
+        print(f"Error al crear/actualizar punt ruta: ")
+        response_data = {'message': 'Error al procesar la solicitud' + str(e)}
+        return JsonResponse(response_data, status=500)
 
 
 @csrf_exempt
@@ -263,42 +259,44 @@ def ruta_completada(request, rute_id):
             return JsonResponse(response_data, status=200)
     return JsonResponse("Error al guardar ruta completada", status=400)
 
+@api_view(['POST'])
+@csrf_exempt
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def add_punts_visitats(request):
+    user = request.user
+    request_data = JSONParser().parse(request)
+    punt, created = Punts.objects.get_or_create(
+        PuntLat=request_data['PuntLat'],
+        PuntLong=request_data['PuntLong'],
+        defaults={
+            'PuntName': request_data['PuntName'],
+        }
+    )
+    punt_visitat, created_visitat = PuntsVisitats.objects.get_or_create(
+        punt=punt,
+        user=user,
+    )
 
+    # Si se creó el punto intermedio correctamente, retornar un mensaje adecuado
+    if created_visitat:
+        response_data = {'message': 'Punto visitado creado correctamente'}
+    else:
+        response_data = {'message': 'Punto visitado actualizado correctament'}
+
+    return JsonResponse(response_data, status=200)
+
+@api_view(["GET"])
 @csrf_exempt
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def punts_visitats(request):
-    # get para todos los puntos visitados de un usuario
     if request.method == 'GET':
         user = request.user
         punts_visitats = PuntsVisitats.objects.filter(user=user)
         punts_visitats = Punts.objects.filter(puntsvisitats__in=punts_visitats)
         punts_visitats = PuntsSerializer(punts_visitats, many=True)
         return JsonResponse(punts_visitats.data, safe=False)
-    elif request.method == 'POST':
-        user = request.user
-        request_data = JSONParser().parse(request)
-        punt, created = Punts.objects.get_or_create(
-            PuntLat=request_data['PuntLat'],
-            PuntLong=request_data['PuntLong'],
-            defaults={
-                'PuntName': request_data['PuntName'],
-            }
-        )
-        punt_visitat, created_visitat = PuntsVisitats.objects.get_or_create(
-            punt=punt,
-            user=user,
-        )
-
-        # Si se creó el punto intermedio correctamente, retornar un mensaje adecuado
-        if created_visitat:
-            response_data = {'message': 'Punto visitado creado correctamente'}
-        else:
-            response_data = {'message': 'Punto visitado actualizado correctament'}
-
-        return JsonResponse(response_data, status=200)
-    return JsonResponse("Error al guardar punt visitat", safe=False)
-
 
 """
 @csrf_exempt
