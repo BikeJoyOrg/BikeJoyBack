@@ -1,9 +1,12 @@
-from django.test import TestCase
+from django.contrib.auth.models import AnonymousUser
+from django.test import TestCase, RequestFactory, override_settings
+from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 import json
 from django.http import JsonResponse
 
 from Users.models import CustomUser
+from Users.views import actualitzar_stats
 
 
 class RegisterViewTests(TestCase):
@@ -34,3 +37,33 @@ class RegisterViewTests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, {'error': 'Username already exists'})
         self.assertFalse(CustomUser.objects.filter(username='testuser').exists())
+
+@override_settings(ROOT_URLCONF='Users.urls')
+class ActualitzarStatsTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(username='testuser', password='12345')
+        token, created = Token.objects.get_or_create(user=self.user)
+        self.token = token
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+
+    def test_successful_stats_update(self):
+        response = self.client.put('/updateStats/', {"coins": 10, "distance": 5, "xp": 20}, format='json')
+        self.assertEqual(response.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.coins, 10)
+        self.assertEqual(self.user.distance, 5)
+        self.assertEqual(self.user.xp, 20)
+
+    def test_no_stats_update(self):
+        response = self.client.put('/updateStats/', {}, format='json')
+        self.assertEqual(response.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.coins, 0)
+        self.assertEqual(self.user.distance, 0)
+        self.assertEqual(self.user.xp, 0)
+
+    def test_unauthorized_stats_update(self):
+        client = APIClient()
+        response = client.put('/updateStats/', {'coins': 10, 'distance': 5, 'xp': 20}, format='json')
+        self.assertEqual(response.status_code, 401)

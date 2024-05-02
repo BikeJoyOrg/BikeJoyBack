@@ -103,11 +103,16 @@ def actualitzar_stats(request):
     user = request.user
     data = request.data
     try:
-        user.distance = data['distance']
-    except KeyError:
-        return JsonResponse({'status': 'error', 'message': 'No se proporcionó la distancia'}, status=400)
+        user.coins += data.get('coins', 0)
+        user.distance += data.get('distance', 0)
+        user.xp += data.get('xp', 0)
+        user.monthlyDistance += data.get('monthlyDistance', 0)
+        user.weeklyDistance += data.get('weeklyDistance', 0)
+        user.dailyDistance += data.get('dailyDistance', 0)
+    except KeyError as e:
+        return Response({'status': 'error', 'message': f'No se proporcionó {str(e)}'}, status=400)
     user.save()
-    return JsonResponse({'status': 'success update'}, status=200)
+    return Response({'status': 'success update'}, status=200)
 
 @csrf_exempt
 @api_view(['GET'])
@@ -129,3 +134,4 @@ def get_users(request):
         return Response(users_data, status=200)
     except Exception as e:
         return JsonResponse({'message': f'Error al obtener información de usuarios: {str(e)}'}, status=500)
+
