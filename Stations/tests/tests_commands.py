@@ -1,4 +1,3 @@
-"""""
 from django.core.management import call_command
 from django.forms import model_to_dict
 from django.test import TestCase
@@ -25,8 +24,8 @@ class TestCommands(TestCase):
                     {
                         "station_id": 2,
                         "name": "Test Station 2",
-                        "lat": 41,
-                        "lon": 2,
+                        "lat": 43,
+                        "lon": 4,
                     }
                 ]
             }
@@ -65,10 +64,32 @@ class TestCommands(TestCase):
     @patch('Stations.management.commands.update_stations.requests.get')
     def test_update_stations_command_successfully(self, mock_get):
         # Crear objectes necessaris pel test
-        punt_1 = Punts.objects.create(PuntId=1, PuntName="Test Punt 1", PuntLat=41, PuntLong=2)
-        punt_2 = Punts.objects.create(PuntId=2, PuntName="Test Punt 2", PuntLat=41, PuntLong=2)
-        Station.objects.create(station_id=1, PuntId=punt_1, mechanical=0, ebike=0, num_docks_available=0)
-        Station.objects.create(station_id=2, PuntId=punt_2, mechanical=0, ebike=0, num_docks_available=0)
+        punt_1 = Punts.objects.create(
+            PuntId=1,
+            PuntName="Test Punt 1",
+            PuntLat=41,
+            PuntLong=2
+        )
+        punt_2 = Punts.objects.create(
+            PuntId=2,
+            PuntName="Test Punt 2",
+            PuntLat=43,
+            PuntLong=4
+        )
+        Station.objects.create(
+            station_id=1,
+            PuntId=punt_1,
+            mechanical=0,
+            ebike=0,
+            num_docks_available=0
+        )
+        Station.objects.create(
+            station_id=2,
+            PuntId=punt_2,
+            mechanical=0,
+            ebike=0,
+            num_docks_available=0
+        )
 
         mock_response = mock_get.return_value
         mock_response.raise_for_status.return_value = None
@@ -110,4 +131,4 @@ class TestCommands(TestCase):
         self.assertEqual(station_2.num_docks_available, 7)
         
         
-        """""
+

@@ -17,7 +17,7 @@ from .serializers import ItemSerializer, ItemPurchasedSerializer
 
 @api_view(['GET'])
 def list_items(request):
-    items = Item.objects.filter(stock_number__gt=0)
+    items = Item.objects.filter(stock_number__gt=0).order_by('-stock_number')
     serializer = ItemSerializer(items, many=True)
     return Response({'items': serializer.data}, status=200)
 
@@ -26,7 +26,7 @@ def list_items(request):
 def list_purchased_items(request, username):
     try:
         user = CustomUser.objects.get(username=username)
-        purchased_items = ItemPurchased.objects.filter(user=user)
+        purchased_items = ItemPurchased.objects.filter(user=user).order_by('-date_purchased')
         serializer = ItemPurchasedSerializer(purchased_items, many=True)
         return Response({'purchased_items': serializer.data}, status=200)
 
