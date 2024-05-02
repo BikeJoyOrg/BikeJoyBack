@@ -13,7 +13,6 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import authentication_classes, permission_classes
 
-
 @csrf_exempt
 @api_view(['POST'])
 def register(request):
@@ -45,6 +44,9 @@ def login_view(request):
                 'coins': user.coins,
                 'distance': user.distance,
                 'xp': user.xp,
+                'monthlyDistance': user.monthlyDistance,
+                'weeklyDistance': user.weeklyDistance,
+                'dailyDistance': user.dailyDistance,
             }
         }, status=200)
     else:
@@ -74,13 +76,20 @@ def getProfile(request):
     user = request.user
 
     user_data = {
-        'username': user.username,
-        'coins': user.coins,
-        'distance': user.distance,
-        'xp': user.xp,
+        'user': {
+            'username': user.username,
+            'coins': user.coins,
+            'distance': user.distance,
+            'xp': user.xp,
+            'monthlyDistance': user.monthlyDistance,
+            'weeklyDistance': user.weeklyDistance,
+            'dailyDistance': user.dailyDistance,
+        }
     }
 
     return Response(user_data, status=200)
+
+
 @csrf_exempt
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
@@ -95,3 +104,23 @@ def actualitzar_stats(request):
     user.save()
     return JsonResponse({'status': 'success update'}, status=200)
 
+@csrf_exempt
+@api_view(['GET'])
+def get_users(request):
+    try:
+        users = CustomUser.objects.all()
+        users_data = []
+        for user in users:
+            user_data = {
+                'username': user.username,
+                'coins': user.coins,
+                'distance': user.distance,
+                'xp': user.xp,
+                'monthlyDistance': user.monthlyDistance,
+                'weeklyDistance': user.weeklyDistance,
+                'dailyDistance': user.dailyDistance,
+            }
+            users_data.append(user_data)
+        return Response(users_data, status=200)
+    except Exception as e:
+        return JsonResponse({'message': f'Error al obtener información de usuarios: {str(e)}'}, status=500)

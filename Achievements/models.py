@@ -1,9 +1,10 @@
 from django.db import models
 
+from Users.models import CustomUser
+
 
 class Achievement(models.Model):
     name = models.CharField(max_length=16, primary_key=True)
-    current_value = models.IntegerField(default=0)
 
 
 class Level(models.Model):
@@ -19,8 +20,16 @@ class Level(models.Model):
     coin_reward = models.IntegerField()
     xp_reward = models.IntegerField()
     pet_reward = models.CharField(max_length=255, null=True, blank=True)
-    is_achieved = models.BooleanField(default=False)
-    is_redeemed = models.BooleanField(default=False)
     achievement = models.ForeignKey(Achievement, related_name='levels', on_delete=models.CASCADE)
 
 
+class AchievementProgress(models.Model):
+    achievement = models.ForeignKey(Achievement, related_name='progress', on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, related_name='achievements', on_delete=models.CASCADE)
+    last_level_achieved = models.IntegerField(default=0)
+    current_value = models.IntegerField(default=0)
+    is_achieved = models.BooleanField(default=False)
+    is_redeemed = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = (('achievement', 'user'),)
