@@ -13,7 +13,6 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import authentication_classes, permission_classes
 
-
 @csrf_exempt
 @api_view(['POST'])
 def register(request):
