@@ -105,11 +105,11 @@ def rutesApi(request):
                             filtered_rutes.append(rute)
                     rutes = filtered_rutes
 
-        rutes = rutes.order_by(
-            'rating_avg__isnull',
-            '-rating_avg'
-        )
-        rutes_serializer = RutesSerializer(rutes, many=True)
+
+        rutes_with_ratings = rutes.filter(rating_avg__isnull=False).order_by('-rating_avg')
+        rutes_without_ratings = rutes.filter(rating_avg__isnull=True)
+        all_rutes = list(rutes_with_ratings) + list(rutes_without_ratings)
+        rutes_serializer = RutesSerializer(all_rutes, many=True)
         return JsonResponse(rutes_serializer.data, safe=False)
 
 @api_view(['POST'])
