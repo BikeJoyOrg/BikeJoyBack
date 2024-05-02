@@ -282,27 +282,33 @@ def ruta_completada(request, rute_id):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def add_punts_visitats(request):
-    user = request.user
-    request_data = JSONParser().parse(request)
-    punt, created = Punts.objects.get_or_create(
-        PuntLat=request_data['PuntLat'],
-        PuntLong=request_data['PuntLong'],
-        defaults={
-            'PuntName': request_data['PuntName'],
-        }
-    )
-    punt_visitat, created_visitat = PuntsVisitats.objects.get_or_create(
-        punt=punt,
-        user=user,
-    )
+    try:
+        user = request.user
+        request_data = JSONParser().parse(request)
+        punt, created = Punts.objects.get_or_create(
+            PuntLat=request_data['PuntLat'],
+            PuntLong=request_data['PuntLong'],
+            defaults={
+                'PuntName': request_data['PuntName'],
+            }
+        )
+        punt_visitat, created_visitat = PuntsVisitats.objects.get_or_create(
+            punt=punt,
+            user=user,
+        )
 
-    # Si se creó el punto intermedio correctamente, retornar un mensaje adecuado
-    if created_visitat:
-        response_data = {'message': 'Punto visitado creado correctamente'}
-    else:
-        response_data = {'message': 'Punto visitado actualizado correctament'}
+        # Si se creó el punto intermedio correctamente, retornar un mensaje adecuado
+        if created_visitat:
+            response_data = {'message': 'Punto visitado creado correctamente'}
+        else:
+            response_data = {'message': 'Punto visitado actualizado correctament'}
 
-    return JsonResponse(response_data, status=200)
+        return Response(response_data, status=200)
+    except Exception as e:
+        # En caso de error, imprimirlo y devolver un mensaje de error
+        print(f"Error al crear/actualizar punt ruta: ")
+        response_data = {'message': 'Error al procesar la solicitud' + str(e)}
+        return Response(response_data, status=500)
 
 @api_view(["GET"])
 @csrf_exempt
