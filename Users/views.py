@@ -104,3 +104,23 @@ def actualitzar_stats(request):
     user.save()
     return JsonResponse({'status': 'success update'}, status=200)
 
+@csrf_exempt
+@api_view(['GET'])
+def get_users(request):
+    try:
+        users = CustomUser.objects.all()
+        users_data = []
+        for user in users:
+            user_data = {
+                'username': user.username,
+                'coins': user.coins,
+                'distance': user.distance,
+                'xp': user.xp,
+                'monthlyDistance': user.monthlyDistance,
+                'weeklyDistance': user.weeklyDistance,
+                'dailyDistance': user.dailyDistance,
+            }
+            users_data.append(user_data)
+        return Response(users_data, status=200)
+    except Exception as e:
+        return JsonResponse({'message': f'Error al obtener información de usuarios: {str(e)}'}, status=500)
