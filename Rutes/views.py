@@ -161,7 +161,7 @@ def comment_route(request, rute_id):
     try:
         rute = Rutes.objects.get(RuteId=rute_id)
         text = request.data.get('text')
-        if text is None:
+        if text is "" or text is None:
             return Response({'error': 'Invalid text'}, status=400)
 
         comentario = Comentario(ruta=rute, user=user, text=text)
@@ -275,7 +275,7 @@ def ruta_completada(request, rute_id):
             response_data = {'message': 'Ruta completada actualizada correctamente'}
             return Response(response_data, status=200)
     except Exception as e:
-        return Response("Error al guardar ruta completada"+e, status=400)
+        return Response(f"Error al guardar ruta completada", status=400)
 
 @api_view(['POST'])
 @csrf_exempt
@@ -285,7 +285,7 @@ def add_punts_visitats(request):
     try:
         user = request.user
         request_data = JSONParser().parse(request)
-        punt, created = Punts.objects.get_or_create(
+        punt, created = Punts.objects.update_or_create(
             PuntLat=request_data['PuntLat'],
             PuntLong=request_data['PuntLong'],
             defaults={

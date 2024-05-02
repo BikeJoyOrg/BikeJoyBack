@@ -8,3 +8,6 @@ class CustomUser(AbstractUser):
     coins = models.IntegerField(default=0)
     distance = models.IntegerField(default=0)
     xp = models.IntegerField(default=0)
+    monthlyDistance = models.IntegerField(default=0)
+    weeklyDistance = models.IntegerField(default=0)
+    dailyDistance = models.IntegerField(default=0)
