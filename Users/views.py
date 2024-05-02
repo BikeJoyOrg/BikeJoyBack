@@ -82,6 +82,8 @@ def getProfile(request):
     }
 
     return Response(user_data, status=200)
+
+
 @csrf_exempt
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
