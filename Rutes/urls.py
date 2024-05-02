@@ -17,4 +17,5 @@ urlpatterns = [
     path('routes/completed/<int:rute_id>/', views.ruta_completada, name='complete_route'),
     path('routes/punt_visitat/', views.punts_visitats, name='punts_visitats'),
     path('routes/add_punt_visitat/', views.add_punts_visitats, name='punts_visitats_ruta'),
+    path('rutas/', views.get_routes, name='get_routes'),
 ]

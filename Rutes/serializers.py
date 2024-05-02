@@ -48,3 +48,27 @@ class PuntsIntermedisSerializer(serializers.ModelSerializer):
                   'PuntOrder',
                   'RuteId',
                   'PuntId')
+
+#Serializador servicio API
+class RouteSerializer(serializers.ModelSerializer):
+    distance_km = serializers.SerializerMethodField()
+    PuntFinalLat = serializers.SerializerMethodField()
+    PuntFinalLong = serializers.SerializerMethodField()
+    class Meta:
+        model = Rutes
+        fields = ['RuteId', 'RuteName', 'distance_km', 'PuntIniciLat', 'PuntIniciLong', 'PuntFinalLat',
+                  'PuntFinalLong']
+    def get_distance_km(self, obj):
+        return obj.RuteDistance / 1000
+    def get_PuntFinalLat(self, obj):
+        # Lógica para obtener la latitud del punto final
+        punts_intermedis = PuntsIntermedis.objects.filter(RuteId=obj).order_by('PuntOrder')
+        if punts_intermedis.exists():
+            return punts_intermedis.last().PuntId.PuntLat
+        return None
+    def get_PuntFinalLong(self, obj):
+        # Lógica para obtener la longitud del punto final
+        punts_intermedis = PuntsIntermedis.objects.filter(RuteId=obj).order_by('PuntOrder')
+        if punts_intermedis.exists():
+            return punts_intermedis.last().PuntId.PuntLong
+        return None

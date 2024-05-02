@@ -10,6 +10,20 @@ from unittest.mock import patch
 from .views import punts_intermedis_list , AfegirPuntRuta
 from .models import PuntsIntermedis, Punts, Rutes
 from rest_framework.parsers import JSONParser
+from django.test import TestCase, RequestFactory
+from unittest.mock import patch, MagicMock
+from rest_framework.test import APIClient
+from Rutes.views import rank_route
+from Rutes.models import Valoracio, Comentario, RutesCompletades
+from Users.models import CustomUser
+from django.contrib.auth.models import User
+from Rutes.views import comment_route
+from Rutes.views import average_rating
+from Rutes.views import get_route_comments
+from Rutes.views import completed_routes_view
+
+
+
 class RutesApiTestCase(TestCase):
     def setUp(self):
         self.client = Client()
@@ -143,3 +157,166 @@ class AfegirPuntRutaTest(TestCase):
         request = self.factory.post('/AfegirPuntRuta/', json.dumps(request_data), content_type='application/json')
         response = AfegirPuntRuta(request)
         self.assertEqual(response.status_code, 500)
+
+
+
+class RankRouteTests(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(username='testuser', password='12345')
+        self.rute = Rutes.objects.create(RuteId=1, RuteName='Test Route', RuteDescription='Test Description')
+
+    @patch('Rutes.views.Rutes.objects.get')
+    def test_rank_route_valid_mark(self, mock_get):
+        mock_get.return_value = self.rute
+        request = self.factory.post('/rank_route/1', {'mark': 3})
+        request.user = self.user
+        response = rank_route(request, 1)
+        self.assertEqual(response.status_code, 200)
+
+    @patch('Rutes.views.Rutes.objects.get')
+    def test_rank_route_invalid_mark(self, mock_get):
+        mock_get.return_value = self.rute
+        request = self.factory.post('/rank_route/1', {'mark': 6})
+        request.user = self.user
+        response = rank_route(request, 1)
+        self.assertEqual(response.status_code, 400)
+
+    @patch('Rutes.views.Rutes.objects.get')
+    def test_rank_route_route_not_found(self, mock_get):
+        mock_get.side_effect = Rutes.DoesNotExist
+        request = self.factory.post('/rank_route/1', {'mark': 3})
+        request.user = self.user
+        response = rank_route(request, 1)
+        self.assertEqual(response.status_code, 404)
+
+class CommentRouteTests(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(username='testuser', password='12345')
+        self.rute = Rutes.objects.create(RuteId=1, RuteName='Test Route', RuteDescription='Test Description')
+
+    @patch('Rutes.views.Rutes.objects.get')
+    def test_valid_comment_submission(self, mock_get):
+        mock_get.return_value = self.rute
+        request = self.factory.post('/comment_route/1', {'text': 'Great route!'})
+        request.user = self.user
+        response = comment_route(request, 1)
+        self.assertEqual(response.status_code, 200)
+
+    @patch('Rutes.views.Rutes.objects.get')
+    def test_invalid_comment_submission(self, mock_get):
+        mock_get.return_value = self.rute
+        request = self.factory.post('/comment_route/1', {'text': ''})
+        request.user = self.user
+        response = comment_route(request, 1)
+        self.assertEqual(response.status_code, 400)
+
+    @patch('Rutes.views.Rutes.objects.get')
+    def test_comment_route_not_found(self, mock_get):
+        mock_get.side_effect = Rutes.DoesNotExist
+        request = self.factory.post('/comment_route/1', {'text': 'Great route!'})
+        request.user = self.user
+        response = comment_route(request, 1)
+        self.assertEqual(response.status_code, 404)
+
+
+class AverageRatingTests(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(username='testuser', password='12345')
+        self.rute = Rutes.objects.create(RuteId=1, RuteName='Test Route', RuteDescription='Test Description')
+
+    @patch('Rutes.views.Rutes.objects.get')
+    @patch('Rutes.views.Valoracio.objects.filter')
+    def test_valid_average_rating(self, mock_get, mock_filter):
+        mock_get.return_value = self.rute
+        mock_filter.return_value.aggregate.return_value = {'mark__avg': 4.5}
+        request = self.factory.get('/average_rating/1')
+        request.user = self.user
+        response = average_rating(request, 1)
+        self.assertEqual(response.status_code, 200)
+
+    @patch('Rutes.views.Rutes.objects.get')
+    @patch('Rutes.views.Valoracio.objects.filter')
+    def test_no_ratings_for_route(self, mock_get, mock_filter):
+        mock_get.return_value = self.rute
+        mock_filter.return_value.aggregate.return_value = {'mark__avg': None}
+        request = self.factory.get('/average_rating/1')
+        request.user = self.user
+        response = average_rating(request, 1)
+        self.assertEqual(response.status_code, 200)
+
+    @patch('Rutes.views.Rutes.objects.get')
+    def test_average_rating_route_not_found(self, mock_get):
+        mock_get.side_effect = Rutes.DoesNotExist
+        request = self.factory.get('/average_rating/1')
+        request.user = self.user
+        response = average_rating(request, 1)
+        self.assertEqual(response.status_code, 404)
+
+
+
+
+class GetRouteCommentsTests(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(username='testuser', password='12345')
+        self.rute = Rutes.objects.create(RuteId=1, RuteName='Test Route', RuteDescription='Test Description')
+
+    @patch('Rutes.views.Rutes.objects.get')
+    @patch('Rutes.views.Comentario.objects.filter')
+    def test_comments_exist_for_route(self, mock_get, mock_filter):
+        mock_get.return_value = self.rute
+        mock_filter.return_value.exists.return_value = True
+        request = self.factory.get('/get_route_comments/1')
+        request.user = self.user
+        response = get_route_comments(request, 1)
+        self.assertEqual(response.status_code, 200)
+
+    @patch('Rutes.views.Rutes.objects.get')
+    @patch('Rutes.views.Comentario.objects.filter')
+    def test_no_comments_for_route(self, mock_get, mock_filter):
+        mock_get.return_value = self.rute
+        mock_filter.return_value.exists.return_value = False
+        request = self.factory.get('/get_route_comments/1')
+        request.user = self.user
+        response = get_route_comments(request, 1)
+        self.assertEqual(response.status_code, 200)
+
+    @patch('Rutes.views.Rutes.objects.get')
+    def test_get_comments_route_not_found(self, mock_get):
+        mock_get.side_effect = Rutes.DoesNotExist
+        request = self.factory.get('/get_route_comments/1')
+        request.user = self.user
+        response = get_route_comments(request, 1)
+        self.assertEqual(response.status_code, 404)
+
+
+
+class CompletedRoutesViewTests(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(username='testuser', password='12345')
+        self.rute = Rutes.objects.create(RuteId=1, RuteName='Test Route', RuteDescription='Test Description')
+
+    @patch('Rutes.views.RutesCompletades.objects.filter')
+    def test_completed_routes_exist(self, mock_filter):
+        mock_filter.return_value.exists.return_value = True
+        request = self.factory.get('/completed_routes_view')
+        request.user = self.user
+        response = completed_routes_view(request)
+        self.assertEqual(response.status_code, 200)
+
+    @patch('Rutes.views.RutesCompletades.objects.filter')
+    def test_no_completed_routes(self, mock_filter):
+        mock_filter.return_value.exists.return_value = False
+        request = self.factory.get('/completed_routes_view')
+        request.user = self.user
+        response = completed_routes_view(request)
+        self.assertEqual(response.status_code, 200)

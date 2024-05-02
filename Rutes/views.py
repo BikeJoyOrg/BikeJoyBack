@@ -14,9 +14,10 @@ from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Avg
 
+
 from Rutes.models import Rutes, Punts, PuntsIntermedis, Valoracio, Comentario, RutesCompletades, PuntsVisitats
 from Rutes.serializers import RutesSerializer, PuntsSerializer, PuntsIntermedisSerializer, \
-    CompletedRoutesSerializer, ComentarioSerializer
+    CompletedRoutesSerializer, ComentarioSerializer, RouteSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -64,21 +65,34 @@ def haversine(lon1, lat1, lon2, lat2):
 @permission_classes([IsAuthenticated])
 def rutesApi(request):
     if request.method == 'GET':
-        distance = request.GET.get('distance')
-        duration = request.GET.get('duration')
+        distance_param = request.GET.get('distance')
+        duration_param = request.GET.get('duration')
         nombreZona = request.GET.get('nombreZona')
         query = request.GET.get('query')
         radio = 2
 
-        rutes = Rutes.objects.all()
+        try:
+            distance = float(distance_param) if distance_param is not None else None
+        except ValueError:
+            logging.error(f"Invalid distance value: {distance_param}")
+            return JsonResponse({"error": "Invalid distance value."}, status=400)
+
+        try:
+            duration = int(duration_param) if duration_param is not None else None
+        except ValueError:
+            logging.error(f"Invalid duration value: {duration_param}")
+            return JsonResponse({"error": "Invalid duration value."}, status=400)
+
+        rutes = Rutes.objects.annotate(rating_avg=Avg('valoracio__mark'))
+
         if query:
             rutes = rutes.filter(Q(RuteName__icontains=query) | Q(RuteDescription__icontains=query))
         else:
-            if duration is not None and duration != 0:
-                rutes = rutes.filter(RuteTime__lte=duration)
+            if duration is not None and duration != 0 and duration != 6:
+                rutes = rutes.filter(RuteTime__lte=duration * 60)
 
-            if distance is not None and distance != 0:
-                rutes = rutes.filter(RuteDistance__lte=distance)
+            if distance is not None and distance != 0 and distance != 10:
+                rutes = rutes.filter(RuteDistance__lte=distance * 1000)
 
             if nombreZona:
                 zona_coords = get_coords_for_zona(nombreZona)
@@ -91,7 +105,11 @@ def rutesApi(request):
                             filtered_rutes.append(rute)
                     rutes = filtered_rutes
 
-        rutes_serializer = RutesSerializer(rutes, many=True)
+
+        rutes_with_ratings = rutes.filter(rating_avg__isnull=False).order_by('-rating_avg')
+        rutes_without_ratings = rutes.filter(rating_avg__isnull=True)
+        all_rutes = list(rutes_with_ratings) + list(rutes_without_ratings)
+        rutes_serializer = RutesSerializer(all_rutes, many=True)
         return JsonResponse(rutes_serializer.data, safe=False)
 
 @api_view(['POST'])
@@ -100,10 +118,8 @@ def rutesApi(request):
 @permission_classes([IsAuthenticated])
 def afegirRuta(request):
     user = request.user
-    logger.debug(f"User: {user}")
     data = JSONParser().parse(request)
     data['creador'] = user.pk
-    logger.debug(f"Data: {data}")
     rutes_serializer = RutesSerializer(data=data)
     if rutes_serializer.is_valid():
         rutes_serializer.save()
@@ -171,10 +187,9 @@ def average_rating(request, rute_id):
         rute = Rutes.objects.get(RuteId=rute_id)
         average = Valoracio.objects.filter(ruta=rute).aggregate(Avg('mark'))['mark__avg']
         if average is not None:
-            rounded_average = round(average + 0.5)
+            rounded_average = round(average)  # Usar round() directamente sin agregar 0.5
         else:
             rounded_average = 0
-
         return Response(rounded_average)
     except Rutes.DoesNotExist:
         return Response({'error': 'Route not found'}, status=404)
@@ -197,51 +212,53 @@ def punts_intermedis_list(request, rute_id):
         route_coords = [{'lat': pi.PuntId.PuntLat, 'lng': pi.PuntId.PuntLong} for pi in punts_intermedis]
         return JsonResponse(route_coords, safe=False)
 
-@api_view(['POST'])
+
 @csrf_exempt
 def AfegirPuntRuta(request):
-    try:
-        with transaction.atomic():
-            request_data = JSONParser().parse(request)
-            ruta = Rutes.objects.get(RuteId=request_data['RuteId'])
-            punt, created = Punts.objects.get_or_create(
-                PuntLat=request_data['PuntLat'],
-                PuntLong=request_data['PuntLong'],
-                defaults={
-                    'PuntName': request_data['PuntName'],
-                }
-            )
+    if request.method == 'POST':
+        try:
+            with transaction.atomic():
+                request_data = JSONParser().parse(request)
+                logger.info(f"Request data: {request_data}")
+                ruta = Rutes.objects.get(RuteId=request_data['RuteId'])
+                punt, created = Punts.objects.get_or_create(
+                    PuntLat=request_data['PuntLat'],
+                    PuntLong=request_data['PuntLong'],
+                    defaults={
+                        'PuntName': request_data['PuntName'],
+                    }
+                )
 
-            # Crear o actualizar el punto intermedio
-            punt_inter, created_inter = PuntsIntermedis.objects.get_or_create(
-                PuntId=punt,
-                RuteId=ruta,
-                PuntOrder=request_data['PuntOrder'],
-                defaults={
-                    'PuntOrder': request_data['PuntOrder'],
-                }
-            )
+                # Crear o actualizar el punto intermedio
+                punt_inter, created_inter = PuntsIntermedis.objects.get_or_create(
+                    PuntId=punt,
+                    RuteId=ruta,
+                    PuntOrder=request_data['PuntOrder'],
+                    defaults={
+                        'PuntOrder': request_data['PuntOrder'],
+                    }
+                )
 
-            # Si se creó el punto intermedio correctamente, retornar un mensaje adecuado
-            if created_inter:
-                response_data = {'message': 'Punto intermedio creado correctamente'}
-            else:
-                response_data = {'message': 'Punto intermedio actualizado correctamente'}
+                # Si se creó el punto intermedio correctamente, retornar un mensaje adecuado
+                if created_inter:
+                    response_data = {'message': 'Punto intermedio creado correctamente'}
+                else:
+                    response_data = {'message': 'Punto intermedio actualizado correctamente'}
 
-        return JsonResponse(response_data, status=200)
-    except Exception as e:
-        # En caso de error, imprimirlo y devolver un mensaje de error
-        print(f"Error al crear/actualizar punt ruta: ")
-        response_data = {'message': 'Error al procesar la solicitud' + str(e)}
-        return JsonResponse(response_data, status=500)
+            return JsonResponse(response_data, status=200)
+        except Exception as e:
+            # En caso de error, imprimirlo y devolver un mensaje de error
+            print(f"Error al crear/actualizar punt ruta: ")
+            response_data = {'message': 'Error al procesar la solicitud' + str(e)}
+            return JsonResponse(response_data, status=500)
 
-
+@api_view(['POST'])
 @csrf_exempt
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def ruta_completada(request, rute_id):
-    user = request.user
-    if request.method == 'POST':
+    try:
+        user = request.user
         request_data = JSONParser().parse(request)
         ruta = Rutes.objects.get(RuteId=rute_id)
         ruta_completada, created = RutesCompletades.objects.get_or_create(
@@ -253,38 +270,45 @@ def ruta_completada(request, rute_id):
         )
         if created:
             response_data = {'message': 'Ruta completada guardada correctamente'}
-            return JsonResponse(response_data, status=201)
+            return Response(response_data, status=201)
         else:
             response_data = {'message': 'Ruta completada actualizada correctamente'}
-            return JsonResponse(response_data, status=200)
-    return JsonResponse("Error al guardar ruta completada", status=400)
+            return Response(response_data, status=200)
+    except Exception as e:
+        return Response("Error al guardar ruta completada"+e, status=400)
 
 @api_view(['POST'])
 @csrf_exempt
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def add_punts_visitats(request):
-    user = request.user
-    request_data = JSONParser().parse(request)
-    punt, created = Punts.objects.get_or_create(
-        PuntLat=request_data['PuntLat'],
-        PuntLong=request_data['PuntLong'],
-        defaults={
-            'PuntName': request_data['PuntName'],
-        }
-    )
-    punt_visitat, created_visitat = PuntsVisitats.objects.get_or_create(
-        punt=punt,
-        user=user,
-    )
+    try:
+        user = request.user
+        request_data = JSONParser().parse(request)
+        punt, created = Punts.objects.get_or_create(
+            PuntLat=request_data['PuntLat'],
+            PuntLong=request_data['PuntLong'],
+            defaults={
+                'PuntName': request_data['PuntName'],
+            }
+        )
+        punt_visitat, created_visitat = PuntsVisitats.objects.get_or_create(
+            punt=punt,
+            user=user,
+        )
 
-    # Si se creó el punto intermedio correctamente, retornar un mensaje adecuado
-    if created_visitat:
-        response_data = {'message': 'Punto visitado creado correctamente'}
-    else:
-        response_data = {'message': 'Punto visitado actualizado correctament'}
+        # Si se creó el punto intermedio correctamente, retornar un mensaje adecuado
+        if created_visitat:
+            response_data = {'message': 'Punto visitado creado correctamente'}
+        else:
+            response_data = {'message': 'Punto visitado actualizado correctament'}
 
-    return JsonResponse(response_data, status=200)
+        return Response(response_data, status=200)
+    except Exception as e:
+        # En caso de error, imprimirlo y devolver un mensaje de error
+        print(f"Error al crear/actualizar punt ruta: ")
+        response_data = {'message': 'Error al procesar la solicitud' + str(e)}
+        return Response(response_data, status=500)
 
 @api_view(["GET"])
 @csrf_exempt
@@ -297,6 +321,14 @@ def punts_visitats(request):
         punts_visitats = Punts.objects.filter(puntsvisitats__in=punts_visitats)
         punts_visitats = PuntsSerializer(punts_visitats, many=True)
         return JsonResponse(punts_visitats.data, safe=False)
+
+#Vista servicio API
+@api_view(['GET'])
+def get_routes(request):
+    routes = Rutes.objects.all()
+    serializer = RouteSerializer(routes, many=True)
+    return Response(serializer.data)
+
 
 """
 @csrf_exempt
