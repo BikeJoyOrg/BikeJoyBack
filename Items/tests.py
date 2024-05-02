@@ -57,8 +57,10 @@ class ListItemsTest(TestCase):
         # Verifiquem que es retornin els 2 items amb stock
         self.assertEqual(len(items_list), 2)
 
+        items = Item.objects.filter(stock_number__gt=0).order_by('-stock_number')
+
         # Verifiquem que els items retornats siguin els correctes
-        serializer = ItemSerializer([self.item1, self.item3], many=True)
+        serializer = ItemSerializer(items, many=True)
         self.assertEqual(items_list, serializer.data)
 
 
@@ -81,7 +83,7 @@ class PurchaseItemTest(TestCase):
 
     def test_purchase_item(self):
         # Solicitud POST
-        response = self.client.post(f'/items/purchase/{self.item.id}/')
+        response = self.client.post(f'/items/{self.item.id}/purchase/')
 
         # Verificació del codi de resposta
         self.assertEqual(response.status_code, 200)
@@ -125,7 +127,7 @@ class ListPurchasedItemsTest(TestCase):
 
     def test_list_purchased_items(self):
         # Solicitud GET
-        response = self.client.get(f'/user/purchases/{self.user.username}/')
+        response = self.client.get(f'/user/{self.user.username}/purchases/')
 
         # Verificació status resposta
         self.assertEqual(response.status_code, 200)
@@ -138,6 +140,9 @@ class ListPurchasedItemsTest(TestCase):
         # Comprovar que es retornin els 3 items comprats
         purchased_items_list = data['purchased_items']
         self.assertEqual(len(purchased_items_list), 3)
-        serializer = ItemPurchasedSerializer([self.item_purchased1, self.item_purchased2, self.item_purchased3],
-                                             many=True)
+
+        # Ordenamos los items comprados por fecha de compra
+        items = ItemPurchased.objects.filter(user=self.user).order_by('-date_purchased')
+
+        serializer = ItemPurchasedSerializer(items, many=True)
         self.assertEqual(purchased_items_list, serializer.data)
