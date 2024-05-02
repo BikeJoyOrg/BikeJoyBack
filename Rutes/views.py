@@ -236,13 +236,13 @@ def AfegirPuntRuta(request):
             response_data = {'message': 'Error al procesar la solicitud' + str(e)}
             return JsonResponse(response_data, status=500)
 
-
+@api_view(['POST'])
 @csrf_exempt
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def ruta_completada(request, rute_id):
-    user = request.user
-    if request.method == 'POST':
+    try:
+        user = request.user
         request_data = JSONParser().parse(request)
         ruta = Rutes.objects.get(RuteId=rute_id)
         ruta_completada, created = RutesCompletades.objects.get_or_create(
@@ -254,11 +254,12 @@ def ruta_completada(request, rute_id):
         )
         if created:
             response_data = {'message': 'Ruta completada guardada correctamente'}
-            return JsonResponse(response_data, status=201)
+            return Response(response_data, status=201)
         else:
             response_data = {'message': 'Ruta completada actualizada correctamente'}
-            return JsonResponse(response_data, status=200)
-    return JsonResponse("Error al guardar ruta completada", status=400)
+            return Response(response_data, status=200)
+    except Exception as e:
+        return Response("Error al guardar ruta completada"+e, status=400)
 
 @api_view(['POST'])
 @csrf_exempt
