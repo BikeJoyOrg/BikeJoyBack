@@ -44,6 +44,9 @@ def login_view(request):
                 'coins': user.coins,
                 'distance': user.distance,
                 'xp': user.xp,
+                'monthlyDistance': user.monthlyDistance,
+                'weeklyDistance': user.weeklyDistance,
+                'dailyDistance': user.dailyDistance,
             }
         }, status=200)
     else:
@@ -78,6 +81,9 @@ def getProfile(request):
             'coins': user.coins,
             'distance': user.distance,
             'xp': user.xp,
+            'monthlyDistance': user.monthlyDistance,
+            'weeklyDistance': user.weeklyDistance,
+            'dailyDistance': user.dailyDistance,
         }
     }
 
