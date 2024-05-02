@@ -59,6 +59,12 @@ INSTALLED_APPS = [
     'storages',
     'Pets.apps.PetsConfig',
     'Achievements.apps.AchievementsConfig',
+    'django_crontab',
+]
+CRONJOBS = [
+    ('*/2 * * * *', 'myapp.models.reset_monthly_distance'),
+    ('0 0 * * 1', 'myapp.models.reset_weekly_distance'),
+    ('0 0 * * *', 'myapp.models.reset_daily_distance')
 ]
 CORS_ALLOWED_ORIGINS = [
     'http://nattech.fib.upc.edu:40360',

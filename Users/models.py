@@ -11,3 +11,15 @@ class CustomUser(AbstractUser):
     monthlyDistance = models.IntegerField(default=0)
     weeklyDistance = models.IntegerField(default=0)
     dailyDistance = models.IntegerField(default=0)
+
+
+def reset_monthly_distance():
+    CustomUser.objects.update(monthlyDistance=0)
+
+
+def reset_weekly_distance():
+    CustomUser.objects.update(weeklyDistance=0)
+
+
+def reset_daily_distance():
+    CustomUser.objects.update(dailyDistance=0)
