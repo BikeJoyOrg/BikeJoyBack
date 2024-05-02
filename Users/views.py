@@ -73,10 +73,12 @@ def getProfile(request):
     user = request.user
 
     user_data = {
-        'username': user.username,
-        'coins': user.coins,
-        'distance': user.distance,
-        'xp': user.xp,
+        'user': {
+            'username': user.username,
+            'coins': user.coins,
+            'distance': user.distance,
+            'xp': user.xp,
+        }
     }
 
     return Response(user_data, status=200)
