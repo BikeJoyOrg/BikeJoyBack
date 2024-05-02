@@ -75,11 +75,11 @@ def rutesApi(request):
         if query:
             rutes = rutes.filter(Q(RuteName__icontains=query) | Q(RuteDescription__icontains=query))
         else:
-            if duration is not None and duration != 0:
-                rutes = rutes.filter(RuteTime__lte=duration)
+            if duration is not None and duration != 0 and duration != 6:
+                rutes = rutes.filter(RuteTime__lte=duration*60)
 
-            if distance is not None and distance != 0:
-                rutes = rutes.filter(RuteDistance__lte=distance)
+            if distance is not None and distance != 0 and distance != 10:
+                rutes = rutes.filter(RuteDistance__lte=distance*1000)
 
             if nombreZona:
                 zona_coords = get_coords_for_zona(nombreZona)
@@ -298,6 +298,7 @@ def punts_visitats(request):
         punts_visitats = Punts.objects.filter(puntsvisitats__in=punts_visitats)
         punts_visitats = PuntsSerializer(punts_visitats, many=True)
         return JsonResponse(punts_visitats.data, safe=False)
+
 #Vista servicio API
 @api_view(['GET'])
 def get_routes(request):
