@@ -1,9 +1,11 @@
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from rest_framework.decorators import api_view
-from .models import Achievement, Level
-from .serializers import AchievementSerializer
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from .models import Achievement, Level, AchievementProgress
+from .serializers import AchievementSerializer, AchievementProgressSerializer
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 
 @csrf_exempt
@@ -17,6 +19,22 @@ def get_info_achievements(request):
     except Exception as e:
         print(f"Error al obtener información de achievements: {e}")
         return JsonResponse({'message': 'Error al obtener información de achievements'}, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_info_achievements_progress(request):
+    user = request.user
+    try:
+        achievements_progress = AchievementProgress.objects.filter(user=user)
+        achievements_progress_serializer = AchievementProgressSerializer(achievements_progress, many=True)
+        return JsonResponse({'achievementsProgress': achievements_progress_serializer.data}, status=200)
+
+    except Exception as e:
+        print(f"Error al obtener información del progreso de los achievements: {e}")
+        return JsonResponse({'message': 'Error al obtener información del progreso de los achievements'}, status=500)
 
 
 @csrf_exempt
