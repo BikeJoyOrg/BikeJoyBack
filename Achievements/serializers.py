@@ -28,11 +28,11 @@ class AchievementSerializer(serializers.ModelSerializer):
 
 
 class AchievementProgressSerializer(serializers.ModelSerializer):
-    lastLevelAchieved = serializers.CharField(source='last_level_achieved')
+    lastAchievedLevel = serializers.CharField(source='last_achieved_level')
     currentValue = serializers.CharField(source='current_value')
     isAchieved = serializers.CharField(source='is_achieved')
     isRedeemed = serializers.CharField(source='is_redeemed')
 
     class Meta:
         model = AchievementProgress
-        fields = ['achievement', 'lastLevelAchieved', 'currentValue', 'isAchieved', 'isRedeemed']
+        fields = ['achievement', 'lastAchievedLevel', 'currentValue', 'isAchieved', 'isRedeemed']
