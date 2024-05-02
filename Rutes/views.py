@@ -65,21 +65,34 @@ def haversine(lon1, lat1, lon2, lat2):
 @permission_classes([IsAuthenticated])
 def rutesApi(request):
     if request.method == 'GET':
-        distance = request.GET.get('distance')
-        duration = request.GET.get('duration')
+        distance_param = request.GET.get('distance')
+        duration_param = request.GET.get('duration')
         nombreZona = request.GET.get('nombreZona')
         query = request.GET.get('query')
         radio = 2
 
-        rutes = Rutes.objects.all()
+        try:
+            distance = float(distance_param) if distance_param is not None else None
+        except ValueError:
+            logging.error(f"Invalid distance value: {distance_param}")
+            return JsonResponse({"error": "Invalid distance value."}, status=400)
+
+        try:
+            duration = int(duration_param) if duration_param is not None else None
+        except ValueError:
+            logging.error(f"Invalid duration value: {duration_param}")
+            return JsonResponse({"error": "Invalid duration value."}, status=400)
+
+        rutes = Rutes.objects.annotate(rating_avg=Avg('valoracio__mark'))
+
         if query:
             rutes = rutes.filter(Q(RuteName__icontains=query) | Q(RuteDescription__icontains=query))
         else:
             if duration is not None and duration != 0 and duration != 6:
-                rutes = rutes.filter(RuteTime__lte=duration*60)
+                rutes = rutes.filter(RuteTime__lte=duration * 60)
 
             if distance is not None and distance != 0 and distance != 10:
-                rutes = rutes.filter(RuteDistance__lte=distance*1000)
+                rutes = rutes.filter(RuteDistance__lte=distance * 1000)
 
             if nombreZona:
                 zona_coords = get_coords_for_zona(nombreZona)
@@ -92,6 +105,7 @@ def rutesApi(request):
                             filtered_rutes.append(rute)
                     rutes = filtered_rutes
 
+        rutes = rutes.order_by('-rating_avg')
         rutes_serializer = RutesSerializer(rutes, many=True)
         return JsonResponse(rutes_serializer.data, safe=False)
 
@@ -170,10 +184,9 @@ def average_rating(request, rute_id):
         rute = Rutes.objects.get(RuteId=rute_id)
         average = Valoracio.objects.filter(ruta=rute).aggregate(Avg('mark'))['mark__avg']
         if average is not None:
-            rounded_average = round(average + 0.5)
+            rounded_average = round(average)  # Usar round() directamente sin agregar 0.5
         else:
             rounded_average = 0
-
         return Response(rounded_average)
     except Rutes.DoesNotExist:
         return Response({'error': 'Route not found'}, status=404)
