@@ -1,4 +1,5 @@
 import logging
+import math
 
 from django.db import transaction
 from django.http.response import JsonResponse
@@ -161,7 +162,7 @@ def comment_route(request, rute_id):
     try:
         rute = Rutes.objects.get(RuteId=rute_id)
         text = request.data.get('text')
-        if text is "" or text is None:
+        if text == "" or text is None:
             return Response({'error': 'Invalid text'}, status=400)
 
         comentario = Comentario(ruta=rute, user=user, text=text)
@@ -181,13 +182,17 @@ def completed_routes_view(request):
     return Response(serializer.data)
 
 
+
 @api_view(['GET'])
 def average_rating(request, rute_id):
     try:
-        rute = Rutes.objects.get(RuteId=rute_id)
+        rute = Rutes.objects.get(pk=rute_id)
         average = Valoracio.objects.filter(ruta=rute).aggregate(Avg('mark'))['mark__avg']
         if average is not None:
-            rounded_average = round(average)  # Usar round() directamente sin agregar 0.5
+            if average - int(average) >= 0.5:
+                rounded_average = math.ceil(average)
+            else:
+                rounded_average = int(average)
         else:
             rounded_average = 0
         return Response(rounded_average)

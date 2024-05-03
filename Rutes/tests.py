@@ -173,7 +173,7 @@ class RankRouteTest(TestCase):
         mock_rute_get.return_value = Rutes(RuteId=1)
         mock_valoracio_filter.return_value = Valoracio.objects.none()
 
-        response = self.client.post('/routes/rank/1/', {'mark': 5}, format='json')
+        response = self.client.post('/routes/1/rank/', {'mark': 5}, format='json')
 
         self.assertEqual(response.status_code, 200)
 
@@ -183,7 +183,7 @@ class RankRouteTest(TestCase):
         mock_rute_get.return_value = Rutes(RuteId=1)
         mock_valoracio_filter.return_value = Valoracio.objects.filter(mark=3)
 
-        response = self.client.post('/routes/rank/1/', {'mark': 5}, format='json')
+        response = self.client.post('/routes/1/rank/', {'mark': 5}, format='json')
 
         self.assertEqual(response.status_code, 200)
 
@@ -191,13 +191,13 @@ class RankRouteTest(TestCase):
     def test_rank_route_returns_error_when_rute_does_not_exist(self, mock_rute_get):
         mock_rute_get.side_effect = Rutes.DoesNotExist
 
-        response = self.client.post('/routes/rank/1/', {'mark': 5}, format='json')
+        response = self.client.post('/routes/1/rank/', {'mark': 5}, format='json')
 
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.json(), {'error': 'Route not found'})
 
     def test_rank_route_returns_error_when_invalid_mark(self):
-        response = self.client.post('/routes/rank/1/', {'mark': 6}, format='json')
+        response = self.client.post('/routes/1/rank/', {'mark': 6}, format='json')
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), {'error': 'Invalid mark'})
@@ -217,7 +217,7 @@ class CommentRouteTest(TestCase):
     def test_comment_route_creates_new_comment(self, mock_rute_get):
         mock_rute_get.return_value = Rutes(RuteId=1)
 
-        response = self.client.post('/routes/comment/1/', {'text': 'Great route!'}, format='json')
+        response = self.client.post('/routes/1/comment/', {'text': 'Great route!'}, format='json')
 
         self.assertEqual(response.status_code, 200)
 
@@ -225,13 +225,13 @@ class CommentRouteTest(TestCase):
     def test_comment_route_returns_error_when_rute_does_not_exist(self, mock_rute_get):
         mock_rute_get.side_effect = Rutes.DoesNotExist
 
-        response = self.client.post('/routes/comment/1/', {'text': 'Great route!'}, format='json')
+        response = self.client.post('/routes/1/comment/', {'text': 'Great route!'}, format='json')
 
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.json(), {'error': 'Route not found'})
 
     def test_comment_route_returns_error_when_invalid_text(self):
-        response = self.client.post('/routes/comment/1/', {'text': ''}, format='json')
+        response = self.client.post('/routes/1/comment/', {'text': ''}, format='json')
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), {'error': 'Invalid text'})
@@ -268,52 +268,8 @@ class CompletedRoutesViewTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), [])
-"""
-class AverageRatingTest(TestCase):
-    def setUp(self):
-        self.factory = RequestFactory()
-        self.user = CustomUser.objects.create_user(
-            username='testuser', email='testuser@test.com', password='testpassword')
-        self.rute1 = Rutes.objects.create(RuteName="Rute1", RuteDescription="Description1", RuteTime=60, RuteDistance=5,
-                                          PuntIniciLat=41.3834, PuntIniciLong=2.1761, creador=self.user)
-        self.token = Token.objects.create(user=self.user)
-        self.client = APIClient()
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
 
-    @patch('Rutes.views.Rutes.objects.get')
-    @patch('Rutes.views.Valoracio.objects.filter')
-    def test_average_rating_returns_average_rating(self, mock_valoracio_filter, mock_rute_get):
-        mock_rute_get.return_value = Rutes(RuteId=1)
-        mock_valoracio_filter.return_value = [
-            Valoracio(id=1, ruta=Rutes(RuteId=1), user=self.user, mark=5),
-            Valoracio(id=2, ruta=Rutes(RuteId=1), user=self.user, mark=4),
-        ]
 
-        response = self.client.get('/routes/1/average-rating/', format='json')
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), 4.5)
-
-    @patch('Rutes.views.Rutes.objects.get')
-    @patch('Rutes.views.Valoracio.objects.filter')
-    def test_average_rating_returns_zero_when_no_ratings(self, mock_valoracio_filter, mock_rute_get):
-        mock_rute_get.return_value = Rutes(RuteId=1)
-        mock_valoracio_filter.return_value = []
-
-        response = self.client.get('/routes/1/average-rating/', format='json')
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), 0)
-
-    @patch('Rutes.views.Rutes.objects.get')
-    def test_average_rating_returns_error_when_rute_does_not_exist(self, mock_rute_get):
-        mock_rute_get.side_effect = Rutes.DoesNotExist
-
-        response = self.client.get('/routes/1/average-rating/', format='json')
-
-        self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.json(), {'error': 'Route not found'})
-"""
 class GetRouteCommentsTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
@@ -374,13 +330,13 @@ class PuntsIntermedisListTestCase(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
 
     def test_punts_intermedis_list_with_existing_intermediary_points(self):
-        response = self.client.get('/puntos-intermedios/1/')
+        response = self.client.get('/routes/1/puntos-intermedios/')
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
         self.assertEqual(len(response_data), 1)
 
     def test_punts_intermedis_list_with_no_intermediary_points(self):
-        response = self.client.get('/puntos-intermedios/2/')
+        response = self.client.get('/routes/2/puntos-intermedios/')
         self.assertEqual(response.status_code, 200)
 
 class AfegirPuntRutaTest(TestCase):
@@ -474,7 +430,7 @@ class RutaCompletadaTest(TestCase):
         mock_rute_get.return_value = Rutes(RuteId=1)
         mock_ruta_completada_create.return_value = (RutesCompletades(id=1), True)
 
-        response = self.client.post('/routes/completed/1/', {}, format='json')
+        response = self.client.post('/routes/1/completed/', {}, format='json')
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json(), {'message': 'Ruta completada guardada correctamente'})
@@ -489,7 +445,7 @@ class RutaCompletadaTest(TestCase):
         mock_rute_get.return_value = Rutes(RuteId=1)
         mock_ruta_completada_create.return_value = (RutesCompletades(id=1), False)
 
-        response = self.client.post('/routes/completed/1/', {}, format='json')
+        response = self.client.post('/routes/1/completed/', {}, format='json')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {'message': 'Ruta completada actualizada correctamente'})
@@ -502,7 +458,7 @@ class RutaCompletadaTest(TestCase):
         }
         mock_rute_get.side_effect = Rutes.DoesNotExist
 
-        response = self.client.post('/routes/completed/1/', {}, format='json')
+        response = self.client.post('/routes/1/completed/', {}, format='json')
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 'Error al guardar ruta completada')
@@ -598,7 +554,7 @@ class GetRoutesTest(TestCase):
             Rutes(RuteId=2, RuteName='Test Route 2', RuteDistance=2000, RuteTime=120, RuteRating=4, PuntIniciLat=41.3835, PuntIniciLong=2.1762, creador=self.user),
         ]
 
-        response = self.client.get('/rutas/', format='json')
+        response = self.client.get('/routes/', format='json')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), [
@@ -610,7 +566,31 @@ class GetRoutesTest(TestCase):
     def test_get_routes_returns_empty_when_no_routes(self, mock_rutes_all):
         mock_rutes_all.return_value = []
 
-        response = self.client.get('/rutas/', format='json')
+        response = self.client.get('/routes/', format='json')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), [])
+
+
+class AverageRatingTestCase(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = CustomUser.objects.create_user(username='testuser', password='12345')
+        self.rute = Rutes.objects.create(RuteName="Test Rute", RuteDescription="Test Description", RuteDistance=10, RuteTime=60, PuntIniciLat=41.3834, PuntIniciLong=2.1761, creador=self.user)
+        self.valoracio1 = Valoracio.objects.create(ruta=self.rute, user=self.user, mark=4)
+        self.valoracio2 = Valoracio.objects.create(ruta=self.rute, user=self.user, mark=5)
+
+    def test_average_rating_correct_rounding(self):
+        response = self.client.get(reverse('average_rating', kwargs={'rute_id': self.rute.pk}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, 5)
+
+    def test_average_rating_no_ratings(self):
+        rute_without_ratings = Rutes.objects.create(RuteName="Rute No Ratings", RuteDescription="No Ratings", RuteDistance=5, RuteTime=30, PuntIniciLat=41.3835, PuntIniciLong=2.1762, creador=self.user)
+        response = self.client.get(reverse('average_rating', kwargs={'rute_id': rute_without_ratings.pk}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, 0)
+
+    def test_average_rating_route_not_found(self):
+        response = self.client.get(reverse('average_rating', kwargs={'rute_id': 999}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
