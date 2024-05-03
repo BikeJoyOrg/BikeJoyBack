@@ -26,7 +26,7 @@ class Level(models.Model):
 class AchievementProgress(models.Model):
     achievement = models.ForeignKey(Achievement, related_name='progress', on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, related_name='achievements', on_delete=models.CASCADE)
-    last_level_achieved = models.IntegerField(default=0)
+    last_achieved_level = models.IntegerField(default=0)
     current_value = models.IntegerField(default=0)
     is_achieved = models.BooleanField(default=False)
     is_redeemed = models.BooleanField(default=False)

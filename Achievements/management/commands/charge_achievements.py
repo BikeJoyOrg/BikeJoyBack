@@ -135,7 +135,7 @@ class Command(BaseCommand):
                     achievement=achievement,
                     level=level_data['level'],
                     description=level_data['description'],
-                    current_value=level_data['current_value'],
+                    value_required=level_data['value_required'],
                     coin_reward=level_data['coin_reward'],
                     xp_reward=level_data['xp_reward']
                 )

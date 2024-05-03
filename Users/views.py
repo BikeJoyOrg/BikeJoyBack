@@ -12,6 +12,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import authentication_classes, permission_classes
+from Achievements.models import Achievement, AchievementProgress
 
 @csrf_exempt
 @api_view(['POST'])
@@ -21,7 +22,11 @@ def register(request):
     if CustomUser.objects.filter(username=username).exists():
         return Response({'error': 'Username already exists'}, status=400)
     if form.is_valid():
-        form.save()
+        user = form.save()
+
+        # Crear una instancia de AchievementProgress para cada Achievement
+        for achievement in Achievement.objects.all():
+            AchievementProgress.objects.create(achievement=achievement, user=user)
         return Response(status=200)
     else:
         return Response({'error': form.errors}, status=400)

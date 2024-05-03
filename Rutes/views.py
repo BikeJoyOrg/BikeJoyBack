@@ -1,4 +1,5 @@
 import logging
+import math
 
 from django.db import transaction
 from django.http.response import JsonResponse
@@ -161,7 +162,7 @@ def comment_route(request, rute_id):
     try:
         rute = Rutes.objects.get(RuteId=rute_id)
         text = request.data.get('text')
-        if text is None:
+        if text == "" or text is None:
             return Response({'error': 'Invalid text'}, status=400)
 
         comentario = Comentario(ruta=rute, user=user, text=text)
@@ -181,13 +182,17 @@ def completed_routes_view(request):
     return Response(serializer.data)
 
 
+
 @api_view(['GET'])
 def average_rating(request, rute_id):
     try:
-        rute = Rutes.objects.get(RuteId=rute_id)
+        rute = Rutes.objects.get(pk=rute_id)
         average = Valoracio.objects.filter(ruta=rute).aggregate(Avg('mark'))['mark__avg']
         if average is not None:
-            rounded_average = round(average)  # Usar round() directamente sin agregar 0.5
+            if average - int(average) >= 0.5:
+                rounded_average = math.ceil(average)
+            else:
+                rounded_average = int(average)
         else:
             rounded_average = 0
         return Response(rounded_average)
@@ -275,7 +280,7 @@ def ruta_completada(request, rute_id):
             response_data = {'message': 'Ruta completada actualizada correctamente'}
             return Response(response_data, status=200)
     except Exception as e:
-        return Response("Error al guardar ruta completada"+e, status=400)
+        return Response(f"Error al guardar ruta completada", status=400)
 
 @api_view(['POST'])
 @csrf_exempt
@@ -285,7 +290,7 @@ def add_punts_visitats(request):
     try:
         user = request.user
         request_data = JSONParser().parse(request)
-        punt, created = Punts.objects.get_or_create(
+        punt, created = Punts.objects.update_or_create(
             PuntLat=request_data['PuntLat'],
             PuntLong=request_data['PuntLong'],
             defaults={
