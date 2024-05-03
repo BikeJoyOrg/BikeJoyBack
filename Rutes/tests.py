@@ -554,7 +554,7 @@ class GetRoutesTest(TestCase):
             Rutes(RuteId=2, RuteName='Test Route 2', RuteDistance=2000, RuteTime=120, RuteRating=4, PuntIniciLat=41.3835, PuntIniciLong=2.1762, creador=self.user),
         ]
 
-        response = self.client.get('/rutas/', format='json')
+        response = self.client.get('/routes/', format='json')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), [
@@ -566,7 +566,7 @@ class GetRoutesTest(TestCase):
     def test_get_routes_returns_empty_when_no_routes(self, mock_rutes_all):
         mock_rutes_all.return_value = []
 
-        response = self.client.get('/rutas/', format='json')
+        response = self.client.get('/routes/', format='json')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), [])

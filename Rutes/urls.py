@@ -4,7 +4,7 @@ from django.urls import path
 from Rutes import views
 
 urlpatterns = [
-    path('routes/', views.rutesApi, name='rutesApi'),
+    path('rutes/', views.rutesApi, name='rutesApi'),
     path('addruta/', views.afegirRuta, name='afegirRuta'),
     #path('punts/', views.puntsApi, name='puntsApi'),
     path('puntsInterRuta/', views.AfegirPuntRuta, name='puntsIntermedisApi'),
@@ -17,5 +17,5 @@ urlpatterns = [
     path('routes/<int:rute_id>/completed/', views.ruta_completada, name='complete_route'),
     path('routes/punt_visitat/', views.punts_visitats, name='punts_visitats'),
     path('routes/add_punt_visitat/', views.add_punts_visitats, name='punts_visitats_ruta'),
-    path('rutas/', views.get_routes, name='get_routes'),
+    path('routes/', views.get_routes, name='get_routes'),
 ]
