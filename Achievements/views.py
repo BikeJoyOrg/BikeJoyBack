@@ -22,7 +22,7 @@ def get_info_achievements(request):
 
 
 @csrf_exempt
-@require_http_methods(["GET"])
+@api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_info_achievements_progress(request):
@@ -34,7 +34,9 @@ def get_info_achievements_progress(request):
 
     except Exception as e:
         print(f"Error al obtener información del progreso de los achievements: {e}")
-        return JsonResponse({'message': f'Error al obtener información del progreso de los achievements: {str(e)}'}, status=500)
+        return JsonResponse(
+            {'message': f'Error al obtener información del progreso de los achievements: {str(e)}', 'user': str(user)},
+            status=500)
 
 
 @csrf_exempt
