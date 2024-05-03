@@ -34,7 +34,7 @@ def get_info_achievements_progress(request):
 
     except Exception as e:
         print(f"Error al obtener información del progreso de los achievements: {e}")
-        return JsonResponse({'message': 'Error al obtener información del progreso de los achievements'}, status=500)
+        return JsonResponse({'message': f'Error al obtener información del progreso de los achievements: {str(e)}'}, status=500)
 
 
 @csrf_exempt
