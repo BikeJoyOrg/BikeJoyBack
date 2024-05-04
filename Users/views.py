@@ -53,6 +53,10 @@ def login_view(request):
                 'monthlyDistance': user.monthlyDistance,
                 'weeklyDistance': user.weeklyDistance,
                 'dailyDistance': user.dailyDistance,
+                'completed_routes': user.completed_routes,
+                'monthlyCompletedRoutes': user.monthlyCompletedRoutes,
+                'weeklyCompletedRoutes': user.weeklyCompletedRoutes,
+                'dailyCompletedRoutes': user.dailyCompletedRoutes,
             }
         }, status=200)
     else:
