@@ -114,6 +114,10 @@ def actualitzar_stats(request):
         user.monthlyDistance += data.get('monthlyDistance', 0)
         user.weeklyDistance += data.get('weeklyDistance', 0)
         user.dailyDistance += data.get('dailyDistance', 0)
+        user.completed_routes += data.get('completed_routes', 0)
+        user.monthlyCompletedRoutes += data.get('monthlyCompletedRoutes', 0)
+        user.weeklyCompletedRoutes += data.get('weeklyCompletedRoutes', 0)
+        user.dailyCompletedRoutes += data.get('dailyCompletedRoutes', 0)
     except KeyError as e:
         return Response({'status': 'error', 'message': f'No se proporcionó {str(e)}'}, status=400)
     user.save()
