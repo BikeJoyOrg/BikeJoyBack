@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from Rutes.models import RutesCompletades
 from .models import CustomUser
 from .forms import CustomUserCreationForm
 from rest_framework.authtoken.models import Token
@@ -89,6 +90,10 @@ def getProfile(request):
             'monthlyDistance': user.monthlyDistance,
             'weeklyDistance': user.weeklyDistance,
             'dailyDistance': user.dailyDistance,
+            'completed_routes': user.completed_routes,
+            'monthlyCompletedRoutes': user.monthlyCompletedRoutes,
+            'weeklyCompletedRoutes': user.weeklyCompletedRoutes,
+            'dailyCompletedRoutes': user.dailyCompletedRoutes,
         }
     }
 
@@ -129,9 +134,12 @@ def get_users(request):
                 'monthlyDistance': user.monthlyDistance,
                 'weeklyDistance': user.weeklyDistance,
                 'dailyDistance': user.dailyDistance,
+                'completed_routes': user.completed_routes,
+                'monthlyCompletedRoutes': user.monthlyCompletedRoutes,
+                'weeklyCompletedRoutes': user.weeklyCompletedRoutes,
+                'dailyCompletedRoutes': user.dailyCompletedRoutes,
             }
             users_data.append(user_data)
         return Response(users_data, status=200)
     except Exception as e:
         return JsonResponse({'message': f'Error al obtener información de usuarios: {str(e)}'}, status=500)
-

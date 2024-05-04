@@ -19,6 +19,7 @@ from django.db.models import Avg
 from Rutes.models import Rutes, Punts, PuntsIntermedis, Valoracio, Comentario, RutesCompletades, PuntsVisitats
 from Rutes.serializers import RutesSerializer, PuntsSerializer, PuntsIntermedisSerializer, \
     CompletedRoutesSerializer, ComentarioSerializer, RouteSerializer
+from Users.models import CustomUser
 
 logger = logging.getLogger(__name__)
 
@@ -274,6 +275,11 @@ def ruta_completada(request, rute_id):
             }
         )
         if created:
+            user.completed_routes += 1
+            user.monthlyCompletedRoutes += 1
+            user.weeklyCompletedRoutes += 1
+            user.dailyCompletedRoutes += 1
+            user.save()
             response_data = {'message': 'Ruta completada guardada correctamente'}
             return Response(response_data, status=201)
         else:

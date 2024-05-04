@@ -10,4 +10,8 @@ class CustomUser(AbstractUser):
     monthlyDistance = models.IntegerField(default=0)
     weeklyDistance = models.IntegerField(default=0)
     dailyDistance = models.IntegerField(default=0)
+    completed_routes = models.IntegerField(default=0)
+    monthlyCompletedRoutes = models.IntegerField(default=0)
+    weeklyCompletedRoutes = models.IntegerField(default=0)
+    dailyCompletedRoutes = models.IntegerField(default=0)
 
